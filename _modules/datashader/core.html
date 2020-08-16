@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<meta charset="utf-8"/>
+<title>datashader.core — Datashader 0.11.1 documentation</title>
+<meta content="Turns even the largest data into images, accurately." name="description"/>
+<meta content="Datashader contributors" name="author"/>
+<!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+<script>
+    WebFont.load({
+      google: {
+        families: ['Source Sans Pro']
+      }
+    });
+  </script>
+<!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="../../_static/css/main.css" rel="stylesheet"/>
+<link href="../../_static/nbsite.css" rel="stylesheet"/>
+<!-- Scripts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script async="" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript">
+</script>
+<script src="../../_static/js/main.js"></script>
+<script src="../../_static/nbsite.js"></script>
+<script src="../../_static/require.js"></script>
+<!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="../../_static/favicon.ico" rel="icon" type="image/png"/>
+<!-- Canonical
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="/_modules/datashader/core.html" rel="canonical">
+</link></head>
+<body class="">
+<header class="navigation">
+<div class="wrapper">
+<a class="logo" href="../../index.html">
+<img alt="Logo" src="../../_static/logo_horizontal.svg"/>
+</a>
+<a class="navigation-menu-button" href="javascript:void(0)" id="js-mobile-menu">Menu</a>
+<nav>
+<ul class="navigation-menu show" id="js-navigation-menu">
+<li class="nav-link doc-head"><a href="https://github.com/holoviz/datashader/">Github</a></li>
+<li class="nav-link doc-head"><a href="https://twitter.com/datashader/">Twitter</a></li>
+<li class="nav-link doc-head"><a href="https://gitter.im/pyviz/pyviz">Gitter</a></li>
+<li class="nav-link doc-head"><a href="https://holoviz.org">HoloViz</a></li>
+<li class="nav-link">
+<div style="display:inline-block;vertical-align: middle;">
+<div class="search-bar">
+<form action="../../search.html" method="get" role="search">
+<input name="q" placeholder="Search" type="search"/>
+<button type="submit">
+<img alt="Search Icon" src="https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/search-icon-black.png"/>
+</button>
+</form>
+</div>
+</div>
+</li>
+</ul>
+</nav>
+</div>
+</header>
+<div class="second-nav">
+<nav>
+<ul class="navigation-menu show">
+<li class="nav-link doc-head"><a href="../../getting_started/index.html">Getting Started</a></li>
+<li class="nav-link doc-head"><a href="../../user_guide/index.html">User Guide</a></li>
+<li class="nav-link doc-head"><a href="../../topics/index.html">Topics</a></li>
+<li class="nav-link doc-head"><a href="../../api.html">API</a></li>
+<li class="nav-link doc-head"><a href="../../FAQ.html">FAQ</a></li>
+<li class="nav-link doc-head"><a href="../../about.html">About</a></li>
+</ul>
+</nav>
+</div>
+<!-- MAIN BODY OF DOCS –––––––––––––––––– -->
+<div class="docs section">
+<div id="hacketyhackhack"> <!-- style="width:20%;margin-right: 100px;"> --> <!--style="display: none;"> style="display:none;"> -->
+<div class="toc" style="width:15%; margin-right:20px;">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/index.html">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../FAQ.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+</ul>
+</div>
+</div>
+<div class="content"> <!-- style="max-width:80%;margin-left:auto;margin-right: auto;">-->
+<h1>Source code for datashader.core</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+
+<span class="kn">from</span> <span class="nn">numbers</span> <span class="kn">import</span> <span class="n">Number</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log10</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">dask.dataframe</span> <span class="k">as</span> <span class="nn">dd</span>
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+<span class="kn">from</span> <span class="nn">six</span> <span class="kn">import</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">xarray</span> <span class="kn">import</span> <span class="n">DataArray</span><span class="p">,</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">Dispatcher</span><span class="p">,</span> <span class="n">ngjit</span><span class="p">,</span> <span class="n">calc_res</span><span class="p">,</span> <span class="n">calc_bbox</span><span class="p">,</span> <span class="n">orient_array</span><span class="p">,</span> \
+    <span class="n">compute_coords</span><span class="p">,</span> <span class="n">dshape_from_xarray_dataset</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_indices</span><span class="p">,</span> <span class="n">dshape_from_pandas</span><span class="p">,</span> <span class="n">dshape_from_dask</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">Expr</span> <span class="c1"># noqa (API import)</span>
+<span class="kn">from</span> <span class="nn">.resampling</span> <span class="kn">import</span> <span class="n">resample_2d</span><span class="p">,</span> <span class="n">resample_2d_distributed</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">reductions</span> <span class="k">as</span> <span class="n">rd</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cudf</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="n">cudf</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">dask_cudf</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="n">dask_cudf</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">class</span> <span class="nc">Axis</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">"""Interface for implementing axis transformations.</span>
+
+<span class="sd">    Instances hold implementations of transformations to and from axis space.</span>
+<span class="sd">    The default implementation is equivalent to:</span>
+
+<span class="sd">    &gt;&gt;&gt; def forward_transform(data_x):</span>
+<span class="sd">    ...     scale * mapper(data_x) + t</span>
+<span class="sd">    &gt;&gt;&gt; def inverse_transform(axis_x):</span>
+<span class="sd">    ...     inverse_mapper((axis_x - t)/s)</span>
+
+<span class="sd">    Where ``mapper`` and ``inverse_mapper`` are elementwise functions mapping</span>
+<span class="sd">    to and from axis-space respectively, and ``scale`` and ``transform`` are</span>
+<span class="sd">    parameters describing a linear scale and translate transformation, computed</span>
+<span class="sd">    by the ``compute_scale_and_translate`` method.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="nf">compute_scale_and_translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">"""Compute the scale and translate parameters for a linear transformation</span>
+<span class="sd">        ``output = s * input + t``, mapping from data space to axis space.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        range : tuple</span>
+<span class="sd">            A tuple representing the range ``[min, max]`` along the axis, in</span>
+<span class="sd">            data space. Both min and max are inclusive.</span>
+<span class="sd">        n : int</span>
+<span class="sd">            The number of bins along the axis.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        s, t : floats</span>
+<span class="sd">        """</span>
+        <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="p">,</span> <span class="nb">range</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">n</span><span class="o">/</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="n">start</span> <span class="o">*</span> <span class="n">s</span>
+        <span class="k">return</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span>
+
+    <span class="k">def</span> <span class="nf">compute_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">"""Compute a 1D array representing the axis index.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        st : tuple</span>
+<span class="sd">            A tuple of ``(scale, translate)`` parameters.</span>
+<span class="sd">        n : int</span>
+<span class="sd">            The number of bins along the dimension.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        index : ndarray</span>
+<span class="sd">        """</span>
+        <span class="n">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">+</span><span class="mf">0.5</span>
+        <span class="n">s</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">st</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse_mapper</span><span class="p">((</span><span class="n">px</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span><span class="o">/</span><span class="n">s</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">mapper</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="sd">"""A mapping from data space to axis space"""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">inverse_mapper</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="sd">"""A mapping from axis space to data space"""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">range</span><span class="p">):</span>
+        <span class="sd">"""Given a range (low,high), raise an error if the range is invalid for this axis"""</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">LinearAxis</span><span class="p">(</span><span class="n">Axis</span><span class="p">):</span>
+    <span class="sd">"""A linear Axis"""</span>
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@ngjit</span>
+    <span class="k">def</span> <span class="nf">mapper</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@ngjit</span>
+    <span class="k">def</span> <span class="nf">inverse_mapper</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+
+<span class="k">class</span> <span class="nc">LogAxis</span><span class="p">(</span><span class="n">Axis</span><span class="p">):</span>
+    <span class="sd">"""A base-10 logarithmic Axis"""</span>
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@ngjit</span>
+    <span class="k">def</span> <span class="nf">mapper</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">log10</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@ngjit</span>
+    <span class="k">def</span> <span class="nf">inverse_mapper</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># temporary workaround for https://github.com/numba/numba/issues/3135 (numba 0.39.0)</span>
+        <span class="k">return</span> <span class="n">y</span><span class="o">**</span><span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">range</span><span class="p">):</span>
+        <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="p">,</span> <span class="nb">range</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">low</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">high</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Range values must be &gt;0 for a LogAxis'</span><span class="p">)</span>
+
+
+<span class="n">_axis_lookup</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'linear'</span><span class="p">:</span> <span class="n">LinearAxis</span><span class="p">(),</span> <span class="s1">'log'</span><span class="p">:</span> <span class="n">LogAxis</span><span class="p">()}</span>
+
+
+<span class="k">def</span> <span class="nf">validate_xy_or_geometry</span><span class="p">(</span><span class="n">glyph</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">geometry</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">geometry</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="n">geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"""</span>
+<span class="si">{glyph}</span><span class="s2"> coordinates may be specified by providing both the x and y arguments, or by</span>
+<span class="s2">providing the geometry argument. Received:</span>
+<span class="s2">    x: </span><span class="si">{x}</span><span class="s2"></span>
+<span class="s2">    y: </span><span class="si">{y}</span><span class="s2"></span>
+<span class="s2">    geometry: </span><span class="si">{geometry}</span><span class="s2"></span>
+<span class="s2">"""</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">glyph</span><span class="o">=</span><span class="n">glyph</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">geometry</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">geometry</span><span class="p">)))</span>
+
+
+<div class="viewcode-block" id="Canvas"><a class="viewcode-back" href="../../api.html#datashader.Canvas">[docs]</a><span class="k">class</span> <span class="nc">Canvas</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">"""An abstract canvas representing the space in which to bin.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    plot_width, plot_height : int, optional</span>
+<span class="sd">        Width and height of the output aggregate in pixels.</span>
+<span class="sd">    x_range, y_range : tuple, optional</span>
+<span class="sd">        A tuple representing the bounds inclusive space ``[min, max]`` along</span>
+<span class="sd">        the axis.</span>
+<span class="sd">    x_axis_type, y_axis_type : str, optional</span>
+<span class="sd">        The type of the axis. Valid options are ``'linear'`` [default], and</span>
+<span class="sd">        ``'log'``.</span>
+<span class="sd">    """</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_width</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">plot_height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+                 <span class="n">x_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">x_axis_type</span><span class="o">=</span><span class="s1">'linear'</span><span class="p">,</span> <span class="n">y_axis_type</span><span class="o">=</span><span class="s1">'linear'</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_width</span> <span class="o">=</span> <span class="n">plot_width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_height</span> <span class="o">=</span> <span class="n">plot_height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">x_range</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">x_range</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">y_range</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y_range</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_axis</span> <span class="o">=</span> <span class="n">_axis_lookup</span><span class="p">[</span><span class="n">x_axis_type</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_axis</span> <span class="o">=</span> <span class="n">_axis_lookup</span><span class="p">[</span><span class="n">y_axis_type</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">"""Compute a reduction by pixel, mapping data to pixels as points.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source : pandas.DataFrame, dask.DataFrame, or xarray.DataArray/Dataset</span>
+<span class="sd">            The input datasource.</span>
+<span class="sd">        x, y : str</span>
+<span class="sd">            Column names for the x and y coordinates of each point. If provided,</span>
+<span class="sd">            the geometry argument may not also be provided.</span>
+<span class="sd">        agg : Reduction, optional</span>
+<span class="sd">            Reduction to compute. Default is ``count()``.</span>
+<span class="sd">        geometry: str</span>
+<span class="sd">            Column name of a PointsArray of the coordinates of each point. If provided,</span>
+<span class="sd">            the x and y arguments may not also be provided.</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span> <span class="nn">.glyphs</span> <span class="kn">import</span> <span class="n">Point</span><span class="p">,</span> <span class="n">MultiPointGeometry</span>
+        <span class="kn">from</span> <span class="nn">.reductions</span> <span class="kn">import</span> <span class="n">count</span> <span class="k">as</span> <span class="n">count_rdn</span>
+
+        <span class="n">validate_xy_or_geometry</span><span class="p">(</span><span class="s1">'Point'</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">agg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">agg</span> <span class="o">=</span> <span class="n">count_rdn</span><span class="p">()</span>
+
+        <span class="c1"># Handle down-selecting of SpatialPointsFrame</span>
+        <span class="k">if</span> <span class="n">geometry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">sys</span>
+            <span class="k">if</span> <span class="s1">'datashader.spatial.points'</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">datashader.spatial.points</span> <span class="kn">import</span> <span class="n">SpatialPointsFrame</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">SpatialPointsFrame</span><span class="p">)</span> <span class="ow">and</span>
+                        <span class="n">source</span><span class="o">.</span><span class="n">spatial</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span>
+                        <span class="n">source</span><span class="o">.</span><span class="n">spatial</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">x</span> <span class="ow">and</span> <span class="n">source</span><span class="o">.</span><span class="n">spatial</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">y</span> <span class="ow">and</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+
+                    <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">spatial_query</span><span class="p">(</span>
+                        <span class="n">x_range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_range</span><span class="p">,</span> <span class="n">y_range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_range</span><span class="p">)</span>
+            <span class="n">glyph</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">spatialpandas</span> <span class="kn">import</span> <span class="n">GeoDataFrame</span>
+            <span class="kn">from</span> <span class="nn">spatialpandas.dask</span> <span class="kn">import</span> <span class="n">DaskGeoDataFrame</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">DaskGeoDataFrame</span><span class="p">):</span>
+                <span class="c1"># Downselect partitions to those that may contain points in viewport</span>
+                <span class="n">x_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">y_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">cx_partitions</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="o">*</span><span class="n">x_range</span><span class="p">),</span> <span class="nb">slice</span><span class="p">(</span><span class="o">*</span><span class="n">y_range</span><span class="p">)]</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">GeoDataFrame</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">"source must be an instance of spatialpandas.GeoDataFrame or </span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="s2">"spatialpandas.dask.DaskGeoDataFrame.</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="s2">"  Received value of type </span><span class="si">{typ}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">typ</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)))</span>
+
+            <span class="n">glyph</span> <span class="o">=</span> <span class="n">MultiPointGeometry</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">bypixel</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">"""Compute a reduction by pixel, mapping data to pixels as one or</span>
+<span class="sd">        more lines.</span>
+
+<span class="sd">        For aggregates that take in extra fields, the interpolated bins will</span>
+<span class="sd">        receive the fields from the previous point. In pseudocode:</span>
+
+<span class="sd">        &gt;&gt;&gt; for i in range(len(rows) - 1):    # doctest: +SKIP</span>
+<span class="sd">        ...     row0 = rows[i]</span>
+<span class="sd">        ...     row1 = rows[i + 1]</span>
+<span class="sd">        ...     for xi, yi in interpolate(row0.x, row0.y, row1.x, row1.y):</span>
+<span class="sd">        ...         add_to_aggregate(xi, yi, row0)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source : pandas.DataFrame, dask.DataFrame, or xarray.DataArray/Dataset</span>
+<span class="sd">            The input datasource.</span>
+<span class="sd">        x, y : str or number or list or tuple or np.ndarray</span>
+<span class="sd">            Specification of the x and y coordinates of each vertex</span>
+<span class="sd">            * str or number: Column labels in source</span>
+<span class="sd">            * list or tuple: List or tuple of column labels in source</span>
+<span class="sd">            * np.ndarray: When axis=1, a literal array of the</span>
+<span class="sd">              coordinates to be used for every row</span>
+<span class="sd">        agg : Reduction, optional</span>
+<span class="sd">            Reduction to compute. Default is ``any()``.</span>
+<span class="sd">        axis : 0 or 1, default 0</span>
+<span class="sd">            Axis in source to draw lines along</span>
+<span class="sd">            * 0: Draw lines using data from the specified columns across</span>
+<span class="sd">                 all rows in source</span>
+<span class="sd">            * 1: Draw one line per row in source using data from the</span>
+<span class="sd">                 specified columns</span>
+<span class="sd">        geometry : str</span>
+<span class="sd">            Column name of a LinesArray of the coordinates of each line. If provided,</span>
+<span class="sd">            the x and y arguments may not also be provided.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Define a canvas and a pandas DataFrame with 6 rows</span>
+<span class="sd">        &gt;&gt;&gt; import pandas as pd  # doctest: +SKIP</span>
+<span class="sd">        ... import numpy as np</span>
+<span class="sd">        ... import datashader as ds</span>
+<span class="sd">        ... from datashader import Canvas</span>
+<span class="sd">        ... import datashader.transfer_functions as tf</span>
+<span class="sd">        ... cvs = Canvas()</span>
+<span class="sd">        ... df = pd.DataFrame({</span>
+<span class="sd">        ...    'A1': [1, 1.5, 2, 2.5, 3, 4],</span>
+<span class="sd">        ...    'A2': [1.5, 2, 3, 3.2, 4, 5],</span>
+<span class="sd">        ...    'B1': [10, 12, 11, 14, 13, 15],</span>
+<span class="sd">        ...    'B2': [11, 9, 10, 7, 8, 12],</span>
+<span class="sd">        ... }, dtype='float64')</span>
+
+<span class="sd">        Aggregate one line across all rows, with coordinates df.A1 by df.B1</span>
+<span class="sd">        &gt;&gt;&gt; agg = cvs.line(df, x='A1', y='B1', axis=0)  # doctest: +SKIP</span>
+<span class="sd">        ... tf.spread(tf.shade(agg))</span>
+
+<span class="sd">        Aggregate two lines across all rows. The first with coordinates</span>
+<span class="sd">        df.A1 by df.B1 and the second with coordinates df.A2 by df.B2</span>
+<span class="sd">        &gt;&gt;&gt; agg = cvs.line(df, x=['A1', 'A2'], y=['B1', 'B2'], axis=0)  # doctest: +SKIP</span>
+<span class="sd">        ... tf.spread(tf.shade(agg))</span>
+
+<span class="sd">        Aggregate two lines across all rows where the lines share the same</span>
+<span class="sd">        x coordinates. The first line will have coordinates df.A1 by df.B1</span>
+<span class="sd">        and the second will have coordinates df.A1 by df.B2</span>
+<span class="sd">        &gt;&gt;&gt; agg = cvs.line(df, x='A1', y=['B1', 'B2'], axis=0)  # doctest: +SKIP</span>
+<span class="sd">        ... tf.spread(tf.shade(agg))</span>
+
+<span class="sd">        Aggregate 6 length-2 lines, one per row, where the ith line has</span>
+<span class="sd">        coordinates [df.A1[i], df.A2[i]] by [df.B1[i], df.B2[i]]</span>
+<span class="sd">        &gt;&gt;&gt; agg = cvs.line(df, x=['A1', 'A2'], y=['B1', 'B2'], axis=1)  # doctest: +SKIP</span>
+<span class="sd">        ... tf.spread(tf.shade(agg))</span>
+
+<span class="sd">        Aggregate 6 length-4 lines, one per row, where the x coordinates</span>
+<span class="sd">        of every line are [0, 1, 2, 3] and the y coordinates of the ith line</span>
+<span class="sd">        are [df.A1[i], df.A2[i], df.B1[i], df.B2[i]].</span>
+<span class="sd">        &gt;&gt;&gt; agg = cvs.line(df,  # doctest: +SKIP</span>
+<span class="sd">        ...                x=np.arange(4),</span>
+<span class="sd">        ...                y=['A1', 'A2', 'B1', 'B2'],</span>
+<span class="sd">        ...                axis=1)</span>
+<span class="sd">        ... tf.spread(tf.shade(agg))</span>
+
+<span class="sd">        Aggregate RaggedArrays of variable length lines, one per row</span>
+<span class="sd">        (requires pandas &gt;= 0.24.0)</span>
+<span class="sd">        &gt;&gt;&gt; df_ragged = pd.DataFrame({  # doctest: +SKIP</span>
+<span class="sd">        ...    'A1': pd.array([</span>
+<span class="sd">        ...        [1, 1.5], [2, 2.5, 3], [1.5, 2, 3, 4], [3.2, 4, 5]],</span>
+<span class="sd">        ...        dtype='Ragged[float32]'),</span>
+<span class="sd">        ...    'B1': pd.array([</span>
+<span class="sd">        ...        [10, 12], [11, 14, 13], [10, 7, 9, 10], [7, 8, 12]],</span>
+<span class="sd">        ...        dtype='Ragged[float32]'),</span>
+<span class="sd">        ...    'group': pd.Categorical([0, 1, 2, 1])</span>
+<span class="sd">        ... })</span>
+<span class="sd">        ...</span>
+<span class="sd">        ... agg = cvs.line(df_ragged, x='A1', y='B1', axis=1)</span>
+<span class="sd">        ... tf.spread(tf.shade(agg))</span>
+
+<span class="sd">        Aggregate RaggedArrays of variable length lines by group column,</span>
+<span class="sd">        one per row (requires pandas &gt;= 0.24.0)</span>
+<span class="sd">        &gt;&gt;&gt; agg = cvs.line(df_ragged, x='A1', y='B1',  # doctest: +SKIP</span>
+<span class="sd">        ...                agg=ds.count_cat('group'), axis=1)</span>
+<span class="sd">        ... tf.spread(tf.shade(agg))</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span> <span class="nn">.glyphs</span> <span class="kn">import</span> <span class="p">(</span><span class="n">LineAxis0</span><span class="p">,</span> <span class="n">LinesAxis1</span><span class="p">,</span> <span class="n">LinesAxis1XConstant</span><span class="p">,</span>
+                             <span class="n">LinesAxis1YConstant</span><span class="p">,</span> <span class="n">LineAxis0Multi</span><span class="p">,</span>
+                             <span class="n">LinesAxis1Ragged</span><span class="p">,</span> <span class="n">LineAxis1Geometry</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">.reductions</span> <span class="kn">import</span> <span class="nb">any</span> <span class="k">as</span> <span class="n">any_rdn</span>
+
+        <span class="n">validate_xy_or_geometry</span><span class="p">(</span><span class="s1">'Line'</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">agg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">agg</span> <span class="o">=</span> <span class="n">any_rdn</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">spatialpandas</span> <span class="kn">import</span> <span class="n">GeoDataFrame</span>
+            <span class="kn">from</span> <span class="nn">spatialpandas.dask</span> <span class="kn">import</span> <span class="n">DaskGeoDataFrame</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">DaskGeoDataFrame</span><span class="p">):</span>
+                <span class="c1"># Downselect partitions to those that may contain lines in viewport</span>
+                <span class="n">x_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">y_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">cx_partitions</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="o">*</span><span class="n">x_range</span><span class="p">),</span> <span class="nb">slice</span><span class="p">(</span><span class="o">*</span><span class="n">y_range</span><span class="p">)]</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">GeoDataFrame</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">"source must be an instance of spatialpandas.GeoDataFrame or </span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="s2">"spatialpandas.dask.DaskGeoDataFrame.</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="s2">"  Received value of type </span><span class="si">{typ}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">typ</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)))</span>
+
+            <span class="n">glyph</span> <span class="o">=</span> <span class="n">LineAxis1Geometry</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Broadcast column specifications to handle cases where</span>
+            <span class="c1"># x is a list and y is a string or vice versa</span>
+            <span class="n">orig_x</span><span class="p">,</span> <span class="n">orig_y</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_broadcast_column_specifications</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))</span> <span class="ow">and</span>
+                        <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">LineAxis0</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span>
+                        <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">LineAxis0Multi</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">Invalid combination of x and y arguments to Canvas.line when axis=0.</span>
+<span class="s2">    Received:</span>
+<span class="s2">        x: </span><span class="si">{x}</span><span class="s2"></span>
+<span class="s2">        y: </span><span class="si">{y}</span><span class="s2"></span>
+<span class="s2">See docstring for more information on valid usage"""</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">x</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">orig_x</span><span class="p">),</span> <span class="n">y</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">orig_y</span><span class="p">)))</span>
+
+            <span class="k">elif</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">LinesAxis1</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span>  <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">LinesAxis1XConstant</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">LinesAxis1YConstant</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))</span> <span class="ow">and</span>
+                        <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">LinesAxis1Ragged</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">Invalid combination of x and y arguments to Canvas.line when axis=1.</span>
+<span class="s2">    Received:</span>
+<span class="s2">        x: </span><span class="si">{x}</span><span class="s2"></span>
+<span class="s2">        y: </span><span class="si">{y}</span><span class="s2"></span>
+<span class="s2">See docstring for more information on valid usage"""</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">x</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">orig_x</span><span class="p">),</span> <span class="n">y</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">orig_y</span><span class="p">)))</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">The axis argument to Canvas.line must be 0 or 1</span>
+<span class="s2">    Received: </span><span class="si">{axis}</span><span class="s2">"""</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">bypixel</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y_stack</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">"""Compute a reduction by pixel, mapping data to pixels as a filled</span>
+<span class="sd">        area region</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source : pandas.DataFrame, dask.DataFrame, or xarray.DataArray/Dataset</span>
+<span class="sd">            The input datasource.</span>
+<span class="sd">        x, y : str or number or list or tuple or np.ndarray</span>
+<span class="sd">            Specification of the x and y coordinates of each vertex of the</span>
+<span class="sd">            line defining the starting edge of the area region.</span>
+<span class="sd">            * str or number: Column labels in source</span>
+<span class="sd">            * list or tuple: List or tuple of column labels in source</span>
+<span class="sd">            * np.ndarray: When axis=1, a literal array of the</span>
+<span class="sd">              coordinates to be used for every row</span>
+<span class="sd">        agg : Reduction, optional</span>
+<span class="sd">            Reduction to compute. Default is ``count()``.</span>
+<span class="sd">        axis : 0 or 1, default 0</span>
+<span class="sd">            Axis in source to draw lines along</span>
+<span class="sd">            * 0: Draw area regions using data from the specified columns</span>
+<span class="sd">                 across all rows in source</span>
+<span class="sd">            * 1: Draw one area region per row in source using data from the</span>
+<span class="sd">                 specified columns</span>
+<span class="sd">        y_stack: str or number or list or tuple or np.ndarray or None</span>
+<span class="sd">            Specification of the y coordinates of each vertex of the line</span>
+<span class="sd">            defining the ending edge of the area region, where the x</span>
+<span class="sd">            coordinate is given by the x argument described above.</span>
+
+<span class="sd">            If y_stack is None, then the area region is filled to the y=0 line</span>
+
+<span class="sd">            If y_stack is not None, then the form of y_stack must match the</span>
+<span class="sd">            form of y.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Define a canvas and a pandas DataFrame with 6 rows</span>
+<span class="sd">        &gt;&gt;&gt; import pandas as pd  # doctest: +SKIP</span>
+<span class="sd">        ... import numpy as np</span>
+<span class="sd">        ... import datashader as ds</span>
+<span class="sd">        ... from datashader import Canvas</span>
+<span class="sd">        ... import datashader.transfer_functions as tf</span>
+<span class="sd">        ... cvs = Canvas()</span>
+<span class="sd">        ... df = pd.DataFrame({</span>
+<span class="sd">        ...    'A1': [1, 1.5, 2, 2.5, 3, 4],</span>
+<span class="sd">        ...    'A2': [1.6, 2.1, 2.9, 3.2, 4.2, 5],</span>
+<span class="sd">        ...    'B1': [10, 12, 11, 14, 13, 15],</span>
+<span class="sd">        ...    'B2': [11, 9, 10, 7, 8, 12],</span>
+<span class="sd">        ... }, dtype='float64')</span>
+
+<span class="sd">        Aggregate one area region across all rows, that starts with</span>
+<span class="sd">        coordinates df.A1 by df.B1 and is filled to the y=0 line</span>
+<span class="sd">        &gt;&gt;&gt; agg = cvs.area(df, x='A1', y='B1',  # doctest: +SKIP</span>
+<span class="sd">        ...                agg=ds.count(), axis=0)</span>
+<span class="sd">        ... tf.shade(agg)</span>
+
+<span class="sd">        Aggregate one area region across all rows, that starts with</span>
+<span class="sd">        coordinates df.A1 by df.B1 and is filled to the line with coordinates</span>
+<span class="sd">        df.A1 by df.B2</span>
+<span class="sd">        &gt;&gt;&gt; agg = cvs.area(df, x='A1', y='B1', y_stack='B2', # doctest: +SKIP</span>
+<span class="sd">        ...                agg=ds.count(), axis=0)</span>
+<span class="sd">        ... tf.shade(agg)</span>
+
+<span class="sd">        Aggregate two area regions across all rows. The first starting</span>
+<span class="sd">        with coordinates df.A1 by df.B1 and the second with coordinates</span>
+<span class="sd">        df.A2 by df.B2. Both regions are filled to the y=0 line</span>
+<span class="sd">        &gt;&gt;&gt; agg = cvs.area(df, x=['A1', 'A2'], y=['B1', 'B2'], agg=ds.count(), axis=0)  # doctest: +SKIP</span>
+<span class="sd">        ... tf.shade(agg)</span>
+
+<span class="sd">        Aggregate two area regions across all rows where the regions share the</span>
+<span class="sd">        same x coordinates. The first region will start with coordinates</span>
+<span class="sd">        df.A1 by df.B1 and the second will start with coordinates</span>
+<span class="sd">        df.A1 by df.B2. Both regions are filled to the y=0 line</span>
+<span class="sd">        &gt;&gt;&gt; agg = cvs.area(df, x='A1', y=['B1', 'B2'], agg=ds.count(), axis=0)  # doctest: +SKIP</span>
+<span class="sd">        ... tf.shade(agg)</span>
+
+<span class="sd">        Aggregate 6 length-2 area regions, one per row, where the ith region</span>
+<span class="sd">        starts with coordinates [df.A1[i], df.A2[i]] by [df.B1[i], df.B2[i]]</span>
+<span class="sd">        and is filled to the y=0 line</span>
+<span class="sd">        &gt;&gt;&gt; agg = cvs.area(df, x=['A1', 'A2'], y=['B1', 'B2'], agg=ds.count(), axis=1)  # doctest: +SKIP</span>
+<span class="sd">        ... tf.shade(agg)</span>
+
+<span class="sd">        Aggregate 6 length-4 area regions, one per row, where the</span>
+<span class="sd">        starting x coordinates of every region are [0, 1, 2, 3] and</span>
+<span class="sd">        the starting y coordinates of the ith region are</span>
+<span class="sd">        [df.A1[i], df.A2[i], df.B1[i], df.B2[i]].  All regions are filled to</span>
+<span class="sd">        the y=0 line</span>
+<span class="sd">        &gt;&gt;&gt; agg = cvs.area(df,  # doctest: +SKIP</span>
+<span class="sd">        ...                x=np.arange(4),</span>
+<span class="sd">        ...                y=['A1', 'A2', 'B1', 'B2'],</span>
+<span class="sd">        ...                agg=ds.count(),</span>
+<span class="sd">        ...                axis=1)</span>
+<span class="sd">        ... tf.shade(agg)</span>
+
+<span class="sd">        Aggregate RaggedArrays of variable length area regions, one per row.</span>
+<span class="sd">        The starting coordinates of the ith region are df_ragged.A1 by</span>
+<span class="sd">        df_ragged.B1 and the regions are filled to the y=0 line.</span>
+<span class="sd">        (requires pandas &gt;= 0.24.0)</span>
+<span class="sd">        &gt;&gt;&gt; df_ragged = pd.DataFrame({  # doctest: +SKIP</span>
+<span class="sd">        ...    'A1': pd.array([</span>
+<span class="sd">        ...        [1, 1.5], [2, 2.5, 3], [1.5, 2, 3, 4], [3.2, 4, 5]],</span>
+<span class="sd">        ...        dtype='Ragged[float32]'),</span>
+<span class="sd">        ...    'B1': pd.array([</span>
+<span class="sd">        ...        [10, 12], [11, 14, 13], [10, 7, 9, 10], [7, 8, 12]],</span>
+<span class="sd">        ...        dtype='Ragged[float32]'),</span>
+<span class="sd">        ...    'B2': pd.array([</span>
+<span class="sd">        ...        [6, 10], [9, 10, 18], [9, 5, 6, 8], [4, 5, 11]],</span>
+<span class="sd">        ...        dtype='Ragged[float32]'),</span>
+<span class="sd">        ...    'group': pd.Categorical([0, 1, 2, 1])</span>
+<span class="sd">        ... })</span>
+<span class="sd">        ...</span>
+<span class="sd">        ... agg = cvs.area(df_ragged, x='A1', y='B1', agg=ds.count(), axis=1)</span>
+<span class="sd">        ... tf.shade(agg)</span>
+
+<span class="sd">        Instead of filling regions to the y=0 line, fill to the line with</span>
+<span class="sd">        coordinates df_ragged.A1 by df_ragged.B2</span>
+<span class="sd">        &gt;&gt;&gt; agg = cvs.area(df_ragged, x='A1', y='B1', y_stack='B2', # doctest: +SKIP</span>
+<span class="sd">        ...                agg=ds.count(), axis=1)</span>
+<span class="sd">        ... tf.shade(agg)</span>
+
+<span class="sd">        (requires pandas &gt;= 0.24.0)</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span> <span class="nn">.glyphs</span> <span class="kn">import</span> <span class="p">(</span>
+            <span class="n">AreaToZeroAxis0</span><span class="p">,</span> <span class="n">AreaToLineAxis0</span><span class="p">,</span>
+            <span class="n">AreaToZeroAxis0Multi</span><span class="p">,</span> <span class="n">AreaToLineAxis0Multi</span><span class="p">,</span>
+            <span class="n">AreaToZeroAxis1</span><span class="p">,</span> <span class="n">AreaToLineAxis1</span><span class="p">,</span>
+            <span class="n">AreaToZeroAxis1XConstant</span><span class="p">,</span> <span class="n">AreaToLineAxis1XConstant</span><span class="p">,</span>
+            <span class="n">AreaToZeroAxis1YConstant</span><span class="p">,</span> <span class="n">AreaToLineAxis1YConstant</span><span class="p">,</span>
+            <span class="n">AreaToZeroAxis1Ragged</span><span class="p">,</span> <span class="n">AreaToLineAxis1Ragged</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">.reductions</span> <span class="kn">import</span> <span class="nb">any</span> <span class="k">as</span> <span class="n">any_rdn</span>
+        <span class="k">if</span> <span class="n">agg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">agg</span> <span class="o">=</span> <span class="n">any_rdn</span><span class="p">()</span>
+
+        <span class="c1"># Broadcast column specifications to handle cases where</span>
+        <span class="c1"># x is a list and y is a string or vice versa</span>
+        <span class="n">orig_x</span><span class="p">,</span> <span class="n">orig_y</span><span class="p">,</span> <span class="n">orig_y_stack</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">y_stack</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">y_stack</span> <span class="o">=</span> <span class="n">_broadcast_column_specifications</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">y_stack</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">y_stack</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))</span> <span class="ow">and</span>
+                        <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">AreaToZeroAxis0</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">AreaToZeroAxis0Multi</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">Invalid combination of x and y arguments to Canvas.area when axis=0.</span>
+<span class="s2">    Received:</span>
+<span class="s2">        x: </span><span class="si">{x}</span><span class="s2"></span>
+<span class="s2">        y: </span><span class="si">{y}</span><span class="s2"></span>
+<span class="s2">See docstring for more information on valid usage"""</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">x</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># y_stack is not None</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))</span> <span class="ow">and</span>
+                        <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))</span> <span class="ow">and</span>
+                        <span class="nb">isinstance</span><span class="p">(</span><span class="n">y_stack</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))):</span>
+
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">AreaToLineAxis0</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">y_stack</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y_stack</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">AreaToLineAxis0Multi</span><span class="p">(</span>
+                        <span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y_stack</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">Invalid combination of x, y, and y_stack arguments to Canvas.area when axis=0.</span>
+<span class="s2">    Received:</span>
+<span class="s2">        x: </span><span class="si">{x}</span><span class="s2"></span>
+<span class="s2">        y: </span><span class="si">{y}</span><span class="s2"></span>
+<span class="s2">        y_stack: </span><span class="si">{y_stack}</span><span class="s2"></span>
+<span class="s2">See docstring for more information on valid usage"""</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">x</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">orig_x</span><span class="p">),</span>
+                        <span class="n">y</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">orig_y</span><span class="p">),</span>
+                        <span class="n">y_stack</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">orig_y_stack</span><span class="p">)))</span>
+
+        <span class="k">elif</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">y_stack</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span>
+                        <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">AreaToZeroAxis1</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">AreaToZeroAxis1XConstant</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">AreaToZeroAxis1YConstant</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">AreaToZeroAxis1Ragged</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">Invalid combination of x and y arguments to Canvas.area when axis=1.</span>
+<span class="s2">    Received:</span>
+<span class="s2">        x: </span><span class="si">{x}</span><span class="s2"></span>
+<span class="s2">        y: </span><span class="si">{y}</span><span class="s2"></span>
+<span class="s2">See docstring for more information on valid usage"""</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">x</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span>
+                        <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span>
+                        <span class="nb">isinstance</span><span class="p">(</span><span class="n">y_stack</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">AreaToLineAxis1</span><span class="p">(</span>
+                        <span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y_stack</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y_stack</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">AreaToLineAxis1XConstant</span><span class="p">(</span>
+                        <span class="n">x</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y_stack</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y_stack</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">AreaToLineAxis1YConstant</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y</span><span class="p">,</span> <span class="n">y_stack</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))</span> <span class="ow">and</span>
+                      <span class="nb">isinstance</span><span class="p">(</span><span class="n">y_stack</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))):</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">AreaToLineAxis1Ragged</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">y_stack</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">Invalid combination of x, y, and y_stack arguments to Canvas.area when axis=1.</span>
+<span class="s2">    Received:</span>
+<span class="s2">        x: </span><span class="si">{x}</span><span class="s2"></span>
+<span class="s2">        y: </span><span class="si">{y}</span><span class="s2"></span>
+<span class="s2">        y_stack: </span><span class="si">{y_stack}</span><span class="s2"></span>
+<span class="s2">See docstring for more information on valid usage"""</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">x</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">orig_x</span><span class="p">),</span>
+                        <span class="n">y</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">orig_y</span><span class="p">),</span>
+                        <span class="n">y_stack</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">orig_y_stack</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">The axis argument to Canvas.line must be 0 or 1</span>
+<span class="s2">    Received: </span><span class="si">{axis}</span><span class="s2">"""</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">bypixel</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">polygons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">"""Compute a reduction by pixel, mapping data to pixels as one or</span>
+<span class="sd">        more filled polygons.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source : xarray.DataArray or Dataset</span>
+<span class="sd">            The input datasource.</span>
+<span class="sd">        geometry : str</span>
+<span class="sd">            Column name of a PolygonsArray of the coordinates of each line.</span>
+<span class="sd">        agg : Reduction, optional</span>
+<span class="sd">            Reduction to compute. Default is ``any()``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        data : xarray.DataArray</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import datashader as ds  # doctest: +SKIP</span>
+<span class="sd">        ... import datashader.transfer_functions as tf</span>
+<span class="sd">        ... from spatialpandas.geometry import PolygonArray</span>
+<span class="sd">        ... from spatialpandas import GeoDataFrame</span>
+<span class="sd">        ... import pandas as pd</span>
+<span class="sd">        ...</span>
+<span class="sd">        ... polygons = PolygonArray([</span>
+<span class="sd">        ...     # First Element</span>
+<span class="sd">        ...     [[0, 0, 1, 0, 2, 2, -1, 4, 0, 0],  # Filled quadrilateral (CCW order)</span>
+<span class="sd">        ...      [0.5, 1,  1, 2,  1.5, 1.5,  0.5, 1],     # Triangular hole (CW order)</span>
+<span class="sd">        ...      [0, 2, 0, 2.5, 0.5, 2.5, 0.5, 2, 0, 2],  # Rectangular hole (CW order)</span>
+<span class="sd">        ...      [2.5, 3, 3.5, 3, 3.5, 4, 2.5, 3],  # Filled triangle</span>
+<span class="sd">        ...     ],</span>
+<span class="sd">        ...</span>
+<span class="sd">        ...     # Second Element</span>
+<span class="sd">        ...     [[3, 0, 3, 2, 4, 2, 4, 0, 3, 0],  # Filled rectangle (CCW order)</span>
+<span class="sd">        ...      # Rectangular hole (CW order)</span>
+<span class="sd">        ...      [3.25, 0.25, 3.75, 0.25, 3.75, 1.75, 3.25, 1.75, 3.25, 0.25],</span>
+<span class="sd">        ...     ]</span>
+<span class="sd">        ... ])</span>
+<span class="sd">        ...</span>
+<span class="sd">        ... df = GeoDataFrame({'polygons': polygons, 'v': range(len(polygons))})</span>
+<span class="sd">        ...</span>
+<span class="sd">        ... cvs = ds.Canvas()</span>
+<span class="sd">        ... agg = cvs.polygons(df, geometry='polygons', agg=ds.sum('v'))</span>
+<span class="sd">        ... tf.shade(agg)</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span> <span class="nn">.glyphs</span> <span class="kn">import</span> <span class="n">PolygonGeom</span>
+        <span class="kn">from</span> <span class="nn">.reductions</span> <span class="kn">import</span> <span class="nb">any</span> <span class="k">as</span> <span class="n">any_rdn</span>
+        <span class="kn">from</span> <span class="nn">spatialpandas</span> <span class="kn">import</span> <span class="n">GeoDataFrame</span>
+        <span class="kn">from</span> <span class="nn">spatialpandas.dask</span> <span class="kn">import</span> <span class="n">DaskGeoDataFrame</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">DaskGeoDataFrame</span><span class="p">):</span>
+            <span class="c1"># Downselect partitions to those that may contain polygons in viewport</span>
+            <span class="n">x_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">y_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">cx_partitions</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="o">*</span><span class="n">x_range</span><span class="p">),</span> <span class="nb">slice</span><span class="p">(</span><span class="o">*</span><span class="n">y_range</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">GeoDataFrame</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"source must be an instance of spatialpandas.GeoDataFrame or </span><span class="se">\n</span><span class="s2">"</span>
+                <span class="s2">"spatialpandas.dask.DaskGeoDataFrame.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="s2">"  Received value of type </span><span class="si">{typ}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">typ</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="n">agg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">agg</span> <span class="o">=</span> <span class="n">any_rdn</span><span class="p">()</span>
+        <span class="n">glyph</span> <span class="o">=</span> <span class="n">PolygonGeom</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bypixel</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">quadmesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">"""Samples a recti- or curvi-linear quadmesh by canvas size and bounds.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source : xarray.DataArray or Dataset</span>
+<span class="sd">            The input datasource.</span>
+<span class="sd">        x, y : str</span>
+<span class="sd">            Column names for the x and y coordinates of each point.</span>
+<span class="sd">        agg : Reduction, optional</span>
+<span class="sd">            Reduction to compute. Default is ``mean()``. Note that agg is ignored when</span>
+<span class="sd">            upsampling.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        data : xarray.DataArray</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span> <span class="nn">.glyphs</span> <span class="kn">import</span> <span class="n">QuadMeshRaster</span><span class="p">,</span> <span class="n">QuadMeshRectilinear</span><span class="p">,</span> <span class="n">QuadMeshCurvilinear</span>
+
+        <span class="c1"># Determine reduction operation</span>
+        <span class="kn">from</span> <span class="nn">.reductions</span> <span class="kn">import</span> <span class="n">mean</span> <span class="k">as</span> <span class="n">mean_rnd</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">agg</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">agg</span><span class="o">.</span><span class="n">column</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">data_vars</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">agg</span><span class="o">.</span><span class="n">column</span>
+            <span class="c1"># Keep as dataset so that source[agg.column] works</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">[[</span><span class="n">name</span><span class="p">]]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">DataArray</span><span class="p">):</span>
+            <span class="c1"># Make dataset so that source[agg.column] works</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid input type"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">agg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">agg</span> <span class="o">=</span> <span class="n">mean_rnd</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">dims</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">x</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">y</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Either specify both x and y coordinates"</span>
+                             <span class="s2">"or allow them to be inferred."</span><span class="p">)</span>
+        <span class="n">yarr</span><span class="p">,</span> <span class="n">xarr</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="n">y</span><span class="p">],</span> <span class="n">source</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">yarr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">xarr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">xarr</span><span class="o">.</span><span class="n">dims</span> <span class="o">!=</span> <span class="n">yarr</span><span class="o">.</span><span class="n">dims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Ensure that x- and y-coordinate arrays "</span>
+                             <span class="s2">"share the same dimensions. x-coordinates "</span>
+                             <span class="s2">"are indexed by </span><span class="si">%s</span><span class="s2"> dims while "</span>
+                             <span class="s2">"y-coordinates are indexed by </span><span class="si">%s</span><span class="s2"> dims."</span> <span class="o">%</span>
+                             <span class="p">(</span><span class="n">xarr</span><span class="o">.</span><span class="n">dims</span><span class="p">,</span> <span class="n">yarr</span><span class="o">.</span><span class="n">dims</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="n">agg</span><span class="o">.</span><span class="n">column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="n">agg</span><span class="o">.</span><span class="n">column</span> <span class="o">!=</span> <span class="n">name</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'DataArray name </span><span class="si">%r</span><span class="s1"> does not match '</span>
+                             <span class="s1">'supplied reduction </span><span class="si">%s</span><span class="s1">.'</span> <span class="o">%</span>
+                             <span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">agg</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">xarr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">xaxis_linear</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_axis</span> <span class="ow">is</span> <span class="n">_axis_lookup</span><span class="p">[</span><span class="s2">"linear"</span><span class="p">]</span>
+            <span class="n">yaxis_linear</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_axis</span> <span class="ow">is</span> <span class="n">_axis_lookup</span><span class="p">[</span><span class="s2">"linear"</span><span class="p">]</span>
+            <span class="n">even_yspacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+                <span class="n">yarr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">yarr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yarr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">yarr</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="n">even_xspacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+                <span class="n">xarr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xarr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xarr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">xarr</span><span class="p">))</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">xaxis_linear</span> <span class="ow">and</span> <span class="n">yaxis_linear</span> <span class="ow">and</span> <span class="n">even_xspacing</span> <span class="ow">and</span> <span class="n">even_yspacing</span><span class="p">:</span>
+                <span class="c1"># Source is a raster, where all x and y coordinates are evenly spaced</span>
+                <span class="n">glyph</span> <span class="o">=</span> <span class="n">QuadMeshRaster</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                <span class="n">upsample_width</span><span class="p">,</span> <span class="n">upsample_height</span> <span class="o">=</span> <span class="n">glyph</span><span class="o">.</span><span class="n">is_upsample</span><span class="p">(</span>
+                        <span class="n">source</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">plot_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_height</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">upsample_width</span> <span class="ow">and</span> <span class="n">upsample_height</span><span class="p">:</span>
+                    <span class="c1"># Override aggregate with more efficient one for upsampling</span>
+                    <span class="n">agg</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">_upsample</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">bypixel</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="ow">not</span> <span class="n">upsample_width</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">upsample_height</span><span class="p">:</span>
+                    <span class="c1"># Downsample both width and height</span>
+                    <span class="k">return</span> <span class="n">bypixel</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Mix of upsampling and downsampling</span>
+                    <span class="c1"># Use general rectilinear quadmesh implementation</span>
+                    <span class="n">glyph</span> <span class="o">=</span> <span class="n">QuadMeshRectilinear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">bypixel</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Source is a general rectilinear quadmesh</span>
+                <span class="n">glyph</span> <span class="o">=</span> <span class="n">QuadMeshRectilinear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">bypixel</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">xarr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">glyph</span> <span class="o">=</span> <span class="n">QuadMeshCurvilinear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">bypixel</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"""</span><span class="se">\</span>
+<span class="s2">x- and y-coordinate arrays must have 1 or 2 dimensions.</span>
+<span class="s2">    Received arrays with dimensions: </span><span class="si">{dims}</span><span class="s2">"""</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">dims</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">xarr</span><span class="o">.</span><span class="n">dims</span><span class="p">)))</span>
+
+    <span class="c1"># TODO re 'untested', below: Consider replacing with e.g. a 3x3</span>
+    <span class="c1"># array in the call to Canvas (plot_height=3,plot_width=3), then</span>
+    <span class="c1"># show the output as a numpy array that has a compact</span>
+    <span class="c1"># representation</span>
+    <span class="k">def</span> <span class="nf">trimesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">simplices</span><span class="p">,</span> <span class="n">mesh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">interp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">"""Compute a reduction by pixel, mapping data to pixels as a triangle.</span>
+
+<span class="sd">        &gt;&gt;&gt; import datashader as ds</span>
+<span class="sd">        &gt;&gt;&gt; verts = pd.DataFrame({'x': [0, 5, 10],</span>
+<span class="sd">        ...                         'y': [0, 10, 0],</span>
+<span class="sd">        ...                         'weight': [1, 5, 3]},</span>
+<span class="sd">        ...                        columns=['x', 'y', 'weight'])</span>
+<span class="sd">        &gt;&gt;&gt; tris = pd.DataFrame({'v0': [2], 'v1': [0], 'v2': [1]},</span>
+<span class="sd">        ...                       columns=['v0', 'v1', 'v2'])</span>
+<span class="sd">        &gt;&gt;&gt; cvs = ds.Canvas(x_range=(verts.x.min(), verts.x.max()),</span>
+<span class="sd">        ...                 y_range=(verts.y.min(), verts.y.max()))</span>
+<span class="sd">        &gt;&gt;&gt; untested = cvs.trimesh(verts, tris)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        vertices : pandas.DataFrame, dask.DataFrame</span>
+<span class="sd">            The input datasource for triangle vertex coordinates. These can be</span>
+<span class="sd">            interpreted as the x/y coordinates of the vertices, with optional</span>
+<span class="sd">            weights for value interpolation. Columns should be ordered</span>
+<span class="sd">            corresponding to 'x', 'y', followed by zero or more (optional)</span>
+<span class="sd">            columns containing vertex values. The rows need not be ordered.</span>
+<span class="sd">            The column data types must be floating point or integer.</span>
+<span class="sd">        simplices : pandas.DataFrame, dask.DataFrame</span>
+<span class="sd">            The input datasource for triangle (simplex) definitions. These can</span>
+<span class="sd">            be interpreted as rows of ``vertices``, aka positions in the</span>
+<span class="sd">            ``vertices`` index. Columns should be ordered corresponding to</span>
+<span class="sd">            'vertex0', 'vertex1', and 'vertex2'. Order of the vertices can be</span>
+<span class="sd">            clockwise or counter-clockwise; it does not matter as long as the</span>
+<span class="sd">            data is consistent for all simplices in the dataframe. The</span>
+<span class="sd">            rows need not be ordered.  The data type for the first</span>
+<span class="sd">            three columns in the dataframe must be integer.</span>
+<span class="sd">        agg : Reduction, optional</span>
+<span class="sd">            Reduction to compute. Default is ``mean()``.</span>
+<span class="sd">        mesh : pandas.DataFrame, optional</span>
+<span class="sd">            An ordered triangle mesh in tabular form, used for optimization</span>
+<span class="sd">            purposes. This dataframe is expected to have come from</span>
+<span class="sd">            ``datashader.utils.mesh()``. If this argument is not None, the first</span>
+<span class="sd">            two arguments are ignored.</span>
+<span class="sd">        interpolate : str, optional default=linear</span>
+<span class="sd">            Method to use for interpolation between specified values. ``nearest``</span>
+<span class="sd">            means to use a single value for the whole triangle, and ``linear``</span>
+<span class="sd">            means to do bilinear interpolation of the pixels within each</span>
+<span class="sd">            triangle (a weighted average of the vertex values). For</span>
+<span class="sd">            backwards compatibility, also accepts ``interp=True`` for ``linear``</span>
+<span class="sd">            and ``interp=False`` for ``nearest``.</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span> <span class="nn">.glyphs</span> <span class="kn">import</span> <span class="n">Triangles</span>
+        <span class="kn">from</span> <span class="nn">.reductions</span> <span class="kn">import</span> <span class="n">mean</span> <span class="k">as</span> <span class="n">mean_rdn</span>
+        <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">mesh</span> <span class="k">as</span> <span class="n">create_mesh</span>
+
+        <span class="n">source</span> <span class="o">=</span> <span class="n">mesh</span>
+
+        <span class="c1"># 'interp' argument is deprecated as of datashader=0.6.4</span>
+        <span class="k">if</span> <span class="n">interpolate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">interpolate</span> <span class="o">==</span> <span class="s1">'linear'</span><span class="p">:</span>
+                <span class="n">interp</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">interpolate</span> <span class="o">==</span> <span class="s1">'nearest'</span><span class="p">:</span>
+                <span class="n">interp</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Invalid interpolate method: options include </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">([</span><span class="s1">'linear'</span><span class="p">,</span><span class="s1">'nearest'</span><span class="p">]))</span>
+
+        <span class="c1"># Validation is done inside the [pd]d_mesh utility functions</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">create_mesh</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">simplices</span><span class="p">)</span>
+
+        <span class="n">verts_have_weights</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vertices</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">verts_have_weights</span><span class="p">:</span>
+            <span class="n">weight_col</span> <span class="o">=</span> <span class="n">vertices</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weight_col</span> <span class="o">=</span> <span class="n">simplices</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">agg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">agg</span> <span class="o">=</span> <span class="n">mean_rdn</span><span class="p">(</span><span class="n">weight_col</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">agg</span><span class="o">.</span><span class="n">column</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">agg</span><span class="o">.</span><span class="n">column</span> <span class="o">=</span> <span class="n">weight_col</span>
+
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">columns</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cols</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+
+        <span class="k">return</span> <span class="n">bypixel</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">Triangles</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">weight_type</span><span class="o">=</span><span class="n">verts_have_weights</span><span class="p">,</span> <span class="n">interp</span><span class="o">=</span><span class="n">interp</span><span class="p">),</span> <span class="n">agg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">raster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+               <span class="n">source</span><span class="p">,</span>
+               <span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">upsample_method</span><span class="o">=</span><span class="s1">'linear'</span><span class="p">,</span>    <span class="c1"># Deprecated as of datashader=0.6.4</span>
+               <span class="n">downsample_method</span><span class="o">=</span><span class="n">rd</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="c1"># Deprecated as of datashader=0.6.4</span>
+               <span class="n">nan_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">agg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">interpolate</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">chunksize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">max_mem</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">"""Sample a raster dataset by canvas size and bounds.</span>
+
+<span class="sd">        Handles 2D or 3D xarray DataArrays, assuming that the last two</span>
+<span class="sd">        array dimensions are the y- and x-axis that are to be</span>
+<span class="sd">        resampled. If a 3D array is supplied a layer may be specified</span>
+<span class="sd">        to resample to select the layer along the first dimension to</span>
+<span class="sd">        resample.</span>
+
+<span class="sd">        Missing values (those having the value indicated by the</span>
+<span class="sd">        "nodata" attribute of the raster) are replaced with `NaN` if</span>
+<span class="sd">        floats, and 0 if int.</span>
+
+<span class="sd">        Also supports resampling out-of-core DataArrays backed by dask</span>
+<span class="sd">        Arrays. By default it will try to maintain the same chunksize</span>
+<span class="sd">        in the output array but a custom chunksize may be provided.</span>
+<span class="sd">        If there are memory constraints they may be defined using the</span>
+<span class="sd">        max_mem parameter, which determines how large the chunks in</span>
+<span class="sd">        memory may be.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source : xarray.DataArray or xr.Dataset</span>
+<span class="sd">            2D or 3D labelled array (if Dataset, the agg reduction must</span>
+<span class="sd">            define the data variable).</span>
+<span class="sd">        layer : float</span>
+<span class="sd">            For a 3D array, value along the z dimension : optional default=None</span>
+<span class="sd">        ds_method : str (optional)</span>
+<span class="sd">            Grid cell aggregation method for a possible downsampling.</span>
+<span class="sd">        us_method : str (optional)</span>
+<span class="sd">            Grid cell interpolation method for a possible upsampling.</span>
+<span class="sd">        nan_value : int or float, optional</span>
+<span class="sd">            Optional nan_value which will be masked out when applying</span>
+<span class="sd">            the resampling.</span>
+<span class="sd">        agg : Reduction, optional default=mean()</span>
+<span class="sd">            Resampling mode when downsampling raster. The supported</span>
+<span class="sd">            options include: first, last, mean, mode, var, std, min,</span>
+<span class="sd">            The agg can be specified as either a string name or as a</span>
+<span class="sd">            reduction function, but note that the function object will</span>
+<span class="sd">            be used only to extract the agg type (mean, max, etc.) and</span>
+<span class="sd">            the optional column name; the hardcoded raster code</span>
+<span class="sd">            supports only a fixed set of reductions and ignores the</span>
+<span class="sd">            actual code of the provided agg.</span>
+<span class="sd">        interpolate : str, optional  default=linear</span>
+<span class="sd">            Resampling mode when upsampling raster.</span>
+<span class="sd">            options include: nearest, linear.</span>
+<span class="sd">        chunksize : tuple(int, int) (optional)</span>
+<span class="sd">            Size of the output chunks. By default this the chunk size is</span>
+<span class="sd">            inherited from the *src* array.</span>
+<span class="sd">        max_mem : int (optional)</span>
+<span class="sd">            The maximum number of bytes that should be loaded into memory</span>
+<span class="sd">            during the regridding operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        data : xarray.Dataset</span>
+<span class="sd">        """</span>
+        <span class="c1"># For backwards compatibility</span>
+        <span class="k">if</span> <span class="n">agg</span>         <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">agg</span><span class="o">=</span><span class="n">downsample_method</span>
+        <span class="k">if</span> <span class="n">interpolate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">interpolate</span><span class="o">=</span><span class="n">upsample_method</span>
+
+        <span class="n">upsample_methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'nearest'</span><span class="p">,</span><span class="s1">'linear'</span><span class="p">]</span>
+
+        <span class="n">downsample_methods</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'first'</span><span class="p">:</span><span class="s1">'first'</span><span class="p">,</span> <span class="n">rd</span><span class="o">.</span><span class="n">first</span><span class="p">:</span><span class="s1">'first'</span><span class="p">,</span>
+                              <span class="s1">'last'</span><span class="p">:</span><span class="s1">'last'</span><span class="p">,</span>   <span class="n">rd</span><span class="o">.</span><span class="n">last</span><span class="p">:</span><span class="s1">'last'</span><span class="p">,</span>
+                              <span class="s1">'mode'</span><span class="p">:</span><span class="s1">'mode'</span><span class="p">,</span>   <span class="n">rd</span><span class="o">.</span><span class="n">mode</span><span class="p">:</span><span class="s1">'mode'</span><span class="p">,</span>
+                              <span class="s1">'mean'</span><span class="p">:</span><span class="s1">'mean'</span><span class="p">,</span>   <span class="n">rd</span><span class="o">.</span><span class="n">mean</span><span class="p">:</span><span class="s1">'mean'</span><span class="p">,</span>
+                              <span class="s1">'var'</span><span class="p">:</span><span class="s1">'var'</span><span class="p">,</span>     <span class="n">rd</span><span class="o">.</span><span class="n">var</span><span class="p">:</span><span class="s1">'var'</span><span class="p">,</span>
+                              <span class="s1">'std'</span><span class="p">:</span><span class="s1">'std'</span><span class="p">,</span>     <span class="n">rd</span><span class="o">.</span><span class="n">std</span><span class="p">:</span><span class="s1">'std'</span><span class="p">,</span>
+                              <span class="s1">'min'</span><span class="p">:</span><span class="s1">'min'</span><span class="p">,</span>     <span class="n">rd</span><span class="o">.</span><span class="n">min</span><span class="p">:</span><span class="s1">'min'</span><span class="p">,</span>
+                              <span class="s1">'max'</span><span class="p">:</span><span class="s1">'max'</span><span class="p">,</span>     <span class="n">rd</span><span class="o">.</span><span class="n">max</span><span class="p">:</span><span class="s1">'max'</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">interpolate</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">upsample_methods</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Invalid interpolate method: options include </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">upsample_methods</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="p">(</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Expected xarray DataArray or Dataset as '</span>
+                             <span class="s1">'the data source, found </span><span class="si">%s</span><span class="s1">.'</span>
+                             <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+        <span class="n">column</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agg</span><span class="p">,</span> <span class="n">rd</span><span class="o">.</span><span class="n">Reduction</span><span class="p">):</span>
+            <span class="n">agg</span><span class="p">,</span> <span class="n">column</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">agg</span><span class="p">),</span> <span class="n">agg</span><span class="o">.</span><span class="n">column</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">DataArray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="n">source</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">column</span><span class="p">):</span>
+                <span class="n">agg_repr</span> <span class="o">=</span> <span class="s1">'</span><span class="si">%s</span><span class="s1">(</span><span class="si">%r</span><span class="s1">)'</span> <span class="o">%</span> <span class="p">(</span><span class="n">agg</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'DataArray name </span><span class="si">%r</span><span class="s1"> does not match '</span>
+                                 <span class="s1">'supplied reduction </span><span class="si">%s</span><span class="s1">.'</span> <span class="o">%</span>
+                                 <span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">agg_repr</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
+            <span class="n">data_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">data_vars</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'When supplying a Dataset the agg reduction '</span>
+                                 <span class="s1">'must specify the variable to aggregate. '</span>
+                                 <span class="s1">'Available data_vars include: </span><span class="si">%r</span><span class="s1">.'</span> <span class="o">%</span> <span class="n">data_vars</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">'Supplied reduction column </span><span class="si">%r</span><span class="s1"> not found '</span>
+                               <span class="s1">'in Dataset, expected one of the following '</span>
+                               <span class="s1">'data variables: </span><span class="si">%r</span><span class="s1">.'</span> <span class="o">%</span> <span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">data_vars</span><span class="p">))</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">agg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">downsample_methods</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Invalid aggregation method: options include </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">downsample_methods</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+        <span class="n">ds_method</span> <span class="o">=</span> <span class="n">downsample_methods</span><span class="p">[</span><span class="n">agg</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">ndim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Raster aggregation expects a 2D or 3D '</span>
+                             <span class="s1">'DataArray, found </span><span class="si">%s</span><span class="s1"> dimensions'</span> <span class="o">%</span> <span class="n">source</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">calc_res</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">ydim</span><span class="p">,</span> <span class="n">xdim</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">xvals</span><span class="p">,</span> <span class="n">yvals</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="n">xdim</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">source</span><span class="p">[</span><span class="n">ydim</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">calc_bbox</span><span class="p">(</span><span class="n">xvals</span><span class="p">,</span> <span class="n">yvals</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">layer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">source</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">layer</span><span class="p">})</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">orient_array</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">dtype</span>
+
+        <span class="k">if</span> <span class="n">nan_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">array</span><span class="o">==</span><span class="n">nan_value</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">nan_value</span><span class="p">)</span>
+            <span class="n">fill_value</span> <span class="o">=</span> <span class="n">nan_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fill_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span><span class="n">right</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">bottom</span><span class="p">,</span><span class="n">top</span><span class="p">)</span>
+
+        <span class="c1"># window coordinates</span>
+        <span class="n">xmin</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">left</span><span class="p">)</span>
+        <span class="n">ymin</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bottom</span><span class="p">)</span>
+        <span class="n">xmax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">right</span><span class="p">)</span>
+        <span class="n">ymax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">top</span><span class="p">)</span>
+
+        <span class="n">width_ratio</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">height_ratio</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">ymax</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">width_ratio</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">height_ratio</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Canvas x_range or y_range values do not match closely enough with the data source to be able to accurately rasterize. Please provide ranges that are more accurate.'</span><span class="p">)</span>
+
+        <span class="n">w</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_width</span> <span class="o">*</span> <span class="n">width_ratio</span><span class="p">)),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_height</span> <span class="o">*</span> <span class="n">height_ratio</span><span class="p">)),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">cmin</span><span class="p">,</span> <span class="n">cmax</span> <span class="o">=</span> <span class="n">get_indices</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">xvals</span><span class="p">,</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">rmin</span><span class="p">,</span> <span class="n">rmax</span> <span class="o">=</span> <span class="n">get_indices</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">yvals</span><span class="p">,</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">ds_method</span><span class="o">=</span><span class="n">ds_method</span><span class="p">,</span>
+                      <span class="n">us_method</span><span class="o">=</span><span class="n">interpolate</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">source_window</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">rmin</span><span class="p">:</span><span class="n">rmax</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">cmin</span><span class="p">:</span><span class="n">cmax</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">ds_method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'var'</span><span class="p">,</span> <span class="s1">'std'</span><span class="p">]:</span>
+                <span class="n">source_window</span> <span class="o">=</span> <span class="n">source_window</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'f'</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source_window</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">resample_2d_distributed</span><span class="p">(</span>
+                    <span class="n">source_window</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">,</span> <span class="n">max_mem</span><span class="o">=</span><span class="n">max_mem</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">resample_2d</span><span class="p">(</span><span class="n">source_window</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">layers</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">source_window</span> <span class="o">=</span> <span class="n">array</span><span class="p">[:,</span> <span class="n">rmin</span><span class="p">:</span><span class="n">rmax</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">cmin</span><span class="p">:</span><span class="n">cmax</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">ds_method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'var'</span><span class="p">,</span> <span class="s1">'std'</span><span class="p">]:</span>
+                <span class="n">source_window</span> <span class="o">=</span> <span class="n">source_window</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'f'</span><span class="p">)</span>
+            <span class="n">arrays</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">source_window</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+                    <span class="n">arr</span> <span class="o">=</span> <span class="n">resample_2d_distributed</span><span class="p">(</span>
+                        <span class="n">arr</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">,</span> <span class="n">max_mem</span><span class="o">=</span><span class="n">max_mem</span><span class="p">,</span>
+                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">arr</span> <span class="o">=</span> <span class="n">resample_2d</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span>
+            <span class="n">layers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">w</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_width</span> <span class="ow">or</span> <span class="n">h</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_height</span><span class="p">:</span>
+            <span class="n">num_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_height</span> <span class="o">-</span> <span class="n">h</span>
+            <span class="n">num_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_width</span> <span class="o">-</span> <span class="n">w</span>
+
+            <span class="n">lpad</span> <span class="o">=</span> <span class="n">xmin</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">rpad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">xmax</span>
+            <span class="n">lpct</span> <span class="o">=</span> <span class="n">lpad</span> <span class="o">/</span> <span class="p">(</span><span class="n">lpad</span> <span class="o">+</span> <span class="n">rpad</span><span class="p">)</span> <span class="k">if</span> <span class="n">lpad</span> <span class="o">+</span> <span class="n">rpad</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">num_width</span> <span class="o">*</span> <span class="n">lpct</span><span class="p">)),</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">num_width</span> <span class="o">-</span> <span class="n">left</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">lshape</span><span class="p">,</span> <span class="n">rshape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_height</span><span class="p">,</span> <span class="n">left</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_height</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">layers</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">lshape</span><span class="p">,</span> <span class="n">rshape</span> <span class="o">=</span> <span class="n">lshape</span> <span class="o">+</span> <span class="p">(</span><span class="n">layers</span><span class="p">,),</span> <span class="n">rshape</span> <span class="o">+</span> <span class="p">(</span><span class="n">layers</span><span class="p">,)</span>
+            <span class="n">left_pad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">lshape</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">,</span> <span class="n">source_window</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">right_pad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">rshape</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">,</span> <span class="n">source_window</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+            <span class="n">tpad</span> <span class="o">=</span> <span class="n">ymin</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">bpad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ymax</span>
+            <span class="n">tpct</span> <span class="o">=</span> <span class="n">tpad</span> <span class="o">/</span> <span class="p">(</span><span class="n">tpad</span> <span class="o">+</span> <span class="n">bpad</span><span class="p">)</span> <span class="k">if</span> <span class="n">tpad</span> <span class="o">+</span> <span class="n">bpad</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">num_height</span> <span class="o">*</span> <span class="n">tpct</span><span class="p">)),</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">bottom</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">num_height</span> <span class="o">-</span> <span class="n">top</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">tshape</span><span class="p">,</span> <span class="n">bshape</span> <span class="o">=</span> <span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span> <span class="p">(</span><span class="n">bottom</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">layers</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">tshape</span><span class="p">,</span> <span class="n">bshape</span> <span class="o">=</span> <span class="n">tshape</span> <span class="o">+</span> <span class="p">(</span><span class="n">layers</span><span class="p">,),</span> <span class="n">bshape</span> <span class="o">+</span> <span class="p">(</span><span class="n">layers</span><span class="p">,)</span>
+            <span class="n">top_pad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">tshape</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">,</span> <span class="n">source_window</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">bottom_pad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">bshape</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">,</span> <span class="n">source_window</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+            <span class="n">concat</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">concatenate</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">Array</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span>
+            <span class="n">arrays</span> <span class="o">=</span> <span class="p">(</span><span class="n">top_pad</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="n">top_pad</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">(</span><span class="n">data</span><span class="p">,)</span>
+            <span class="k">if</span> <span class="n">bottom_pad</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">arrays</span> <span class="o">+=</span> <span class="p">(</span><span class="n">bottom_pad</span><span class="p">,)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">concat</span><span class="p">(</span><span class="n">arrays</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">arrays</span> <span class="o">=</span> <span class="p">(</span><span class="n">left_pad</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="n">left_pad</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">(</span><span class="n">data</span><span class="p">,)</span>
+            <span class="k">if</span> <span class="n">right_pad</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">arrays</span> <span class="o">+=</span> <span class="p">(</span><span class="n">right_pad</span><span class="p">,)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">concat</span><span class="p">(</span><span class="n">arrays</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Reorient array to original orientation</span>
+        <span class="k">if</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Restore nan_value from masked array</span>
+        <span class="k">if</span> <span class="n">nan_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">filled</span><span class="p">()</span>
+
+        <span class="c1"># Restore original dtype</span>
+        <span class="k">if</span> <span class="n">dtype</span> <span class="o">!=</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="c1"># Compute DataArray metadata</span>
+        <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="n">compute_coords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_range</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="p">{</span><span class="n">xdim</span><span class="p">:</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ydim</span><span class="p">:</span> <span class="n">ys</span><span class="p">}</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">ydim</span><span class="p">,</span> <span class="n">xdim</span><span class="p">]</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">res</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">_file_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">_file_obj</span><span class="p">,</span> <span class="s1">'nodata'</span><span class="p">):</span>
+            <span class="n">attrs</span><span class="p">[</span><span class="s1">'nodata'</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">_file_obj</span><span class="o">.</span><span class="n">nodata</span>
+
+        <span class="c1"># Handle DataArray with layers</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">layer_dim</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">coords</span><span class="p">[</span><span class="n">layer_dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">layer_dim</span><span class="p">]</span>
+            <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">layer_dim</span><span class="p">]</span><span class="o">+</span><span class="n">dims</span>
+        <span class="k">return</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="n">attrs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Check that parameter settings are valid for this object"""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_axis</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_range</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_axis</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_range</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">bypixel</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">canvas</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">):</span>
+    <span class="sd">"""Compute an aggregate grouped by pixel sized bins.</span>
+
+<span class="sd">    Aggregate input data ``source`` into a grid with shape and axis matching</span>
+<span class="sd">    ``canvas``, mapping data to bins by ``glyph``, and aggregating by reduction</span>
+<span class="sd">    ``agg``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source : pandas.DataFrame, dask.DataFrame</span>
+<span class="sd">        Input datasource</span>
+<span class="sd">    canvas : Canvas</span>
+<span class="sd">    glyph : Glyph</span>
+<span class="sd">    agg : Reduction</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># Convert 1D xarray DataArrays and DataSets into Dask DataFrames</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">DataArray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">source</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="n">source</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">'value'</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">reset_coords</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">dims</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">data_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">cols_to_keep</span> <span class="o">=</span> <span class="n">_cols_to_keep</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">)</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cols_to_keep</span><span class="p">])</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">to_dask_dataframe</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="p">(</span><span class="n">cudf</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">cudf</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">))):</span>
+        <span class="c1"># Avoid datashape.Categorical instantiation bottleneck</span>
+        <span class="c1"># by only retaining the necessary columns:</span>
+        <span class="c1"># https://github.com/bokeh/datashader/issues/396</span>
+        <span class="c1"># Preserve column ordering without duplicates</span>
+        <span class="n">cols_to_keep</span> <span class="o">=</span> <span class="n">_cols_to_keep</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols_to_keep</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="n">cols_to_keep</span><span class="p">]</span>
+        <span class="n">dshape</span> <span class="o">=</span> <span class="n">dshape_from_pandas</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">dshape</span> <span class="o">=</span> <span class="n">dshape_from_dask</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
+        <span class="c1"># Multi-dimensional Dataset</span>
+        <span class="n">dshape</span> <span class="o">=</span> <span class="n">dshape_from_xarray_dataset</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"source must be a pandas or dask DataFrame"</span><span class="p">)</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">dshape</span><span class="o">.</span><span class="n">measure</span>
+    <span class="n">glyph</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+    <span class="n">agg</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+    <span class="n">canvas</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+
+    <span class="c1"># All-NaN objects (e.g. chunks of arrays with no data) are valid in Datashader</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'All-NaN (slice|axis) encountered'</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bypixel</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">canvas</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_cols_to_keep</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">agg</span><span class="p">):</span>
+    <span class="n">cols_to_keep</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="n">col</span><span class="p">:</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">})</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">glyph</span><span class="o">.</span><span class="n">required_columns</span><span class="p">():</span>
+        <span class="n">cols_to_keep</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">agg</span><span class="p">,</span> <span class="s1">'values'</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">subagg</span> <span class="ow">in</span> <span class="n">agg</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">subagg</span><span class="o">.</span><span class="n">column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">cols_to_keep</span><span class="p">[</span><span class="n">subagg</span><span class="o">.</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">agg</span><span class="p">,</span> <span class="s1">'columns'</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">agg</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">cols_to_keep</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">agg</span><span class="o">.</span><span class="n">column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cols_to_keep</span><span class="p">[</span><span class="n">agg</span><span class="o">.</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">keepit</span> <span class="ow">in</span> <span class="n">cols_to_keep</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">keepit</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_broadcast_column_specifications</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">lengths</span> <span class="o">=</span> <span class="p">{</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))}</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># None of the inputs are lists/tuples, return them as is</span>
+        <span class="k">return</span> <span class="n">args</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">lengths</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">arg</span><span class="p">,)</span> <span class="o">*</span> <span class="n">n</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span><span class="p">,</span> <span class="n">string_types</span><span class="p">))</span> <span class="k">else</span> <span class="n">arg</span>
+            <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span>
+        <span class="p">)</span>
+
+
+<span class="n">bypixel</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">Dispatcher</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<!-- END MAIN BODY OF DOCS ––––––––––––– -->
+<footer class="footer">
+<div class="footer-links">
+<ul>
+<li><span class="footer-title">Links</span></li>
+<li><a href="../../getting_started/index.html">Getting Started</a></li>
+<li><a href="../../user_guide/index.html">User Guide</a></li>
+<li><a href="../../topics/index.html">Topics</a></li>
+<li><a href="../../api.html">API</a></li>
+<li><a href="../../FAQ.html">FAQ</a></li>
+<li><a href="../../about.html">About</a></li>
+</ul>
+<ul>
+<li><span class="footer-title">Join Us</span></li>
+<li><a href="https://github.com/holoviz/datashader/">Github</a></li>
+<li><a href="https://twitter.com/datashader/">Twitter</a></li>
+<li><a href="https://gitter.im/pyviz/pyviz">Gitter</a></li>
+<li><a href="https://holoviz.org">HoloViz</a></li>
+</ul>
+<ul class="copyright">
+<li>2016-2019, Anaconda, Inc.</li>
+</ul>
+</div>
+</footer>
+<!-- Google Analytics -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-154795830-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-154795830-1');
+</script>
+<!-- MathJax Config -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>

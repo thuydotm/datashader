@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<meta charset="utf-8"/>
+<title>API — Datashader 0.11.1 documentation</title>
+<meta content="Turns even the largest data into images, accurately." name="description"/>
+<meta content="Datashader contributors" name="author"/>
+<!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+<script>
+    WebFont.load({
+      google: {
+        families: ['Source Sans Pro']
+      }
+    });
+  </script>
+<!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="_static/css/main.css" rel="stylesheet"/>
+<link href="_static/nbsite.css" rel="stylesheet"/>
+<!-- Scripts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script async="" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript">
+</script>
+<script src="_static/js/main.js"></script>
+<script src="_static/nbsite.js"></script>
+<script src="_static/require.js"></script>
+<!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="_static/favicon.ico" rel="icon" type="image/png"/>
+<!-- Canonical
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="/api.html" rel="canonical">
+</link></head>
+<body class="">
+<header class="navigation">
+<div class="wrapper">
+<a class="logo" href="index.html">
+<img alt="Logo" src="_static/logo_horizontal.svg"/>
+</a>
+<a class="navigation-menu-button" href="javascript:void(0)" id="js-mobile-menu">Menu</a>
+<nav>
+<ul class="navigation-menu show" id="js-navigation-menu">
+<li class="nav-link doc-head"><a href="https://github.com/holoviz/datashader/">Github</a></li>
+<li class="nav-link doc-head"><a href="https://twitter.com/datashader/">Twitter</a></li>
+<li class="nav-link doc-head"><a href="https://gitter.im/pyviz/pyviz">Gitter</a></li>
+<li class="nav-link doc-head"><a href="https://holoviz.org">HoloViz</a></li>
+<li class="nav-link">
+<div style="display:inline-block;vertical-align: middle;">
+<div class="search-bar">
+<form action="search.html" method="get" role="search">
+<input name="q" placeholder="Search" type="search"/>
+<button type="submit">
+<img alt="Search Icon" src="https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/search-icon-black.png"/>
+</button>
+</form>
+</div>
+</div>
+</li>
+</ul>
+</nav>
+</div>
+</header>
+<div class="second-nav">
+<nav>
+<ul class="navigation-menu show">
+<li class="nav-link doc-head"><a href="getting_started/index.html">Getting Started</a></li>
+<li class="nav-link doc-head"><a href="user_guide/index.html">User Guide</a></li>
+<li class="nav-link doc-head"><a href="topics/index.html">Topics</a></li>
+<li class="nav-link doc-head"><a href="#">API</a></li>
+<li class="nav-link doc-head"><a href="FAQ.html">FAQ</a></li>
+<li class="nav-link doc-head"><a href="about.html">About</a></li>
+</ul>
+</nav>
+</div>
+<!-- MAIN BODY OF DOCS –––––––––––––––––– -->
+<div class="docs section">
+<div id="hacketyhackhack"> <!-- style="width:20%;margin-right: 100px;"> --> <!--style="display: none;"> style="display:none;"> -->
+<div class="toc" style="width:15%; margin-right:20px;">
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/index.html">Topics</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#entry-points">Entry Points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edge-bundling">Edge Bundling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#glyphs">Glyphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reductions">Reductions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transfer-functions">Transfer Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#definitions">Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="FAQ.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+</ul>
+</div>
+</div>
+<div class="content"> <!-- style="max-width:80%;margin-left:auto;margin-right: auto;">-->
+<div class="section" id="api">
+<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="entry-points">
+<h2>Entry Points<a class="headerlink" href="#entry-points" title="Permalink to this headline">¶</a></h2>
+<p><strong>Canvas</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.Canvas" title="datashader.Canvas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Canvas</span></code></a>([plot_width, plot_height, x_range, …])</p></td>
+<td><p>An abstract canvas representing the space in which to bin.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Canvas.line</span></code>(source[, x, y, agg, axis, geometry])</p></td>
+<td><p>Compute a reduction by pixel, mapping data to pixels as one or more lines.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Canvas.points</span></code>(source[, x, y, agg, geometry])</p></td>
+<td><p>Compute a reduction by pixel, mapping data to pixels as points.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Canvas.raster</span></code>(source[, layer, …])</p></td>
+<td><p>Sample a raster dataset by canvas size and bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Canvas.trimesh</span></code>(vertices, simplices[, mesh, …])</p></td>
+<td><p>Compute a reduction by pixel, mapping data to pixels as a triangle.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Canvas.validate</span></code>()</p></td>
+<td><p>Check that parameter settings are valid for this object</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pipeline</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.Pipeline" title="datashader.Pipeline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pipeline</span></code></a>(df, glyph[, agg, transform_fn, …])</p></td>
+<td><p>A datashading pipeline callback.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="edge-bundling">
+<h2>Edge Bundling<a class="headerlink" href="#edge-bundling" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.bundling.directly_connect_edges" title="datashader.bundling.directly_connect_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">directly_connect_edges</span></code></a></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">datashader.bundling.connect_edges</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datashader.bundling.hammer_bundle" title="datashader.bundling.hammer_bundle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hammer_bundle</span></code></a>(*args, **params)</p></td>
+<td><p>Iteratively group edges and return as paths suitable for datashading.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="glyphs">
+<h2>Glyphs<a class="headerlink" href="#glyphs" title="Permalink to this headline">¶</a></h2>
+<p><strong>Point</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.glyphs.Point" title="datashader.glyphs.Point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point</span></code></a>(x, y)</p></td>
+<td><p>A point, with center at <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point.inputs</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Point.validate</span></code>(in_dshape)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Line</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+</tbody>
+</table>
+</div>
+<div class="section" id="reductions">
+<h2>Reductions<a class="headerlink" href="#reductions" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.reductions.any" title="datashader.reductions.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code></a>([column])</p></td>
+<td><p>Whether any elements in <code class="docutils literal notranslate"><span class="pre">column</span></code> map to each bin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datashader.reductions.count" title="datashader.reductions.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>([column])</p></td>
+<td><p>Count elements in each bin, returning the result as a uint32.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.reductions.count_cat" title="datashader.reductions.count_cat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_cat</span></code></a>(column)</p></td>
+<td><p>Count of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>, grouped by category.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">by</span></code>(cat_column, reduction)</p></td>
+<td><p>Apply the provided reduction separately per categorical <code class="docutils literal notranslate"><span class="pre">column</span></code> value. Parameters ———- column : str     Name of the column to aggregate over. Column data type must be     categorical. Resulting aggregate has an outer dimension axis along the     categories present. reduction : Reduction     Per-category reduction function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.reductions.first" title="datashader.reductions.first"><code class="xref py py-obj docutils literal notranslate"><span class="pre">first</span></code></a>([column])</p></td>
+<td><p>First value encountered in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datashader.reductions.last" title="datashader.reductions.last"><code class="xref py py-obj docutils literal notranslate"><span class="pre">last</span></code></a>([column])</p></td>
+<td><p>Last value encountered in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.reductions.m2" title="datashader.reductions.m2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">m2</span></code></a>([column])</p></td>
+<td><p>Sum of square differences from the mean of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datashader.reductions.max" title="datashader.reductions.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a>([column])</p></td>
+<td><p>Maximum value of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.reductions.mean" title="datashader.reductions.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([column])</p></td>
+<td><p>Mean of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datashader.reductions.min" title="datashader.reductions.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>([column])</p></td>
+<td><p>Minimum value of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.reductions.mode" title="datashader.reductions.mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mode</span></code></a>([column])</p></td>
+<td><p>Mode (most common value) of all the values encountered in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datashader.reductions.std" title="datashader.reductions.std"><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code></a>([column])</p></td>
+<td><p>Standard Deviation of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.reductions.sum" title="datashader.reductions.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a>([column])</p></td>
+<td><p>Sum of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datashader.reductions.summary" title="datashader.reductions.summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">summary</span></code></a>(**kwargs)</p></td>
+<td><p>A collection of named reductions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.reductions.var" title="datashader.reductions.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a>([column])</p></td>
+<td><p>Variance of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="transfer-functions">
+<h2>Transfer Functions<a class="headerlink" href="#transfer-functions" title="Permalink to this headline">¶</a></h2>
+<p><strong>Image</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.transfer_functions.Image" title="datashader.transfer_functions.Image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Image</span></code></a>(data, coords, …)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Image.to_bytesio</span></code>([format, origin])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Image.to_pil</span></code>([origin])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Images</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Images</span></code>(*images)</p></td>
+<td><p>A list of HTML-representable objects to display in a table.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Images.cols</span></code>(n)</p></td>
+<td><p>Set the number of columns to use in the HTML table.</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Other</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.transfer_functions.dynspread" title="datashader.transfer_functions.dynspread"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dynspread</span></code></a>(img[, threshold, max_px, shape, …])</p></td>
+<td><p>Spread pixels in an image dynamically based on the image density.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datashader.transfer_functions.set_background" title="datashader.transfer_functions.set_background"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_background</span></code></a>(img[, color, name])</p></td>
+<td><p>Return a new image, with the background set to <cite>color</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.transfer_functions.shade" title="datashader.transfer_functions.shade"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shade</span></code></a>(agg[, cmap, color_key, how, alpha, …])</p></td>
+<td><p>Convert a DataArray to an image by choosing an RGBA pixel color for each value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datashader.transfer_functions.spread" title="datashader.transfer_functions.spread"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spread</span></code></a>(img[, px, shape, how, mask, name])</p></td>
+<td><p>Spread pixels in an image.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datashader.transfer_functions.stack" title="datashader.transfer_functions.stack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stack</span></code></a>(*imgs, **kwargs)</p></td>
+<td><p>Combine images together, overlaying later images onto earlier ones.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="definitions">
+<h2>Definitions<a class="headerlink" href="#definitions" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="datashader.Canvas">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.</code><code class="sig-name descname">Canvas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plot_width</span><span class="o">=</span><span class="default_value">600</span></em>, <em class="sig-param"><span class="n">plot_height</span><span class="o">=</span><span class="default_value">600</span></em>, <em class="sig-param"><span class="n">x_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_axis_type</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">y_axis_type</span><span class="o">=</span><span class="default_value">'linear'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/core.html#Canvas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.Canvas" title="Permalink to this definition">¶</a></dt>
+<dd><p>An abstract canvas representing the space in which to bin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>plot_width, plot_height</strong><span class="classifier">int, optional</span></dt><dd><p>Width and height of the output aggregate in pixels.</p>
+</dd>
+<dt><strong>x_range, y_range</strong><span class="classifier">tuple, optional</span></dt><dd><p>A tuple representing the bounds inclusive space <code class="docutils literal notranslate"><span class="pre">[min,</span> <span class="pre">max]</span></code> along
+the axis.</p>
+</dd>
+<dt><strong>x_axis_type, y_axis_type</strong><span class="classifier">str, optional</span></dt><dd><p>The type of the axis. Valid options are <code class="docutils literal notranslate"><span class="pre">'linear'</span></code> [default], and
+<code class="docutils literal notranslate"><span class="pre">'log'</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">area</span></code>(source, x, y[, agg, axis, y_stack])</p></td>
+<td><p>Compute a reduction by pixel, mapping data to pixels as a filled area region</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">line</span></code>(source[, x, y, agg, axis, geometry])</p></td>
+<td><p>Compute a reduction by pixel, mapping data to pixels as one or more lines.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">points</span></code>(source[, x, y, agg, geometry])</p></td>
+<td><p>Compute a reduction by pixel, mapping data to pixels as points.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">polygons</span></code>(source, geometry[, agg])</p></td>
+<td><p>Compute a reduction by pixel, mapping data to pixels as one or more filled polygons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">quadmesh</span></code>(source[, x, y, agg])</p></td>
+<td><p>Samples a recti- or curvi-linear quadmesh by canvas size and bounds. Parameters ———- source : xarray.DataArray or Dataset     The input datasource. x, y : str     Column names for the x and y coordinates of each point. agg : Reduction, optional     Reduction to compute. Default is <code class="docutils literal notranslate"><span class="pre">mean()</span></code>. Note that agg is ignored when     upsampling. Returns ——- data : xarray.DataArray.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">raster</span></code>(source[, layer, upsample_method, …])</p></td>
+<td><p>Sample a raster dataset by canvas size and bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">trimesh</span></code>(vertices, simplices[, mesh, agg, …])</p></td>
+<td><p>Compute a reduction by pixel, mapping data to pixels as a triangle.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate</span></code>()</p></td>
+<td><p>Check that parameter settings are valid for this object</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.Pipeline">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.</code><code class="sig-name descname">Pipeline</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">glyph</em>, <em class="sig-param">agg=&lt;datashader.reductions.count object&gt;</em>, <em class="sig-param">transform_fn=&lt;function identity&gt;</em>, <em class="sig-param">color_fn=&lt;function shade&gt;</em>, <em class="sig-param">spread_fn=&lt;function dynspread&gt;</em>, <em class="sig-param">width_scale=1.0</em>, <em class="sig-param">height_scale=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/pipeline.html#Pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.Pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>A datashading pipeline callback.</p>
+<p>Given a declarative specification, creates a callable with the following
+signature:</p>
+<p><code class="docutils literal notranslate"><span class="pre">callback(x_range,</span> <span class="pre">y_range,</span> <span class="pre">width,</span> <span class="pre">height)</span></code></p>
+<p>where <code class="docutils literal notranslate"><span class="pre">x_range</span></code> and <code class="docutils literal notranslate"><span class="pre">y_range</span></code> form the bounding box on the viewport,
+and <code class="docutils literal notranslate"><span class="pre">width</span></code> and <code class="docutils literal notranslate"><span class="pre">height</span></code> specify the output image dimensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>df</strong><span class="classifier">pandas.DataFrame, dask.DataFrame</span></dt><dd></dd>
+<dt><strong>glyph</strong><span class="classifier">Glyph</span></dt><dd><p>The glyph to bin by.</p>
+</dd>
+<dt><strong>agg</strong><span class="classifier">Reduction, optional</span></dt><dd><p>The reduction to compute per-pixel. Default is <code class="docutils literal notranslate"><span class="pre">count()</span></code>.</p>
+</dd>
+<dt><strong>transform_fn</strong><span class="classifier">callable, optional</span></dt><dd><p>A callable that takes the computed aggregate as an argument, and
+returns another aggregate. This can be used to do preprocessing before
+passing to the <code class="docutils literal notranslate"><span class="pre">color_fn</span></code> function.</p>
+</dd>
+<dt><strong>color_fn</strong><span class="classifier">callable, optional</span></dt><dd><p>A callable that takes the output of <code class="docutils literal notranslate"><span class="pre">tranform_fn</span></code>, and returns an
+<code class="docutils literal notranslate"><span class="pre">Image</span></code> object. Default is <code class="docutils literal notranslate"><span class="pre">shade</span></code>.</p>
+</dd>
+<dt><strong>spread_fn</strong><span class="classifier">callable, optional</span></dt><dd><p>A callable that takes the output of <code class="docutils literal notranslate"><span class="pre">color_fn</span></code>, and returns another
+<code class="docutils literal notranslate"><span class="pre">Image</span></code> object. Default is <code class="docutils literal notranslate"><span class="pre">dynspread</span></code>.</p>
+</dd>
+<dt><strong>height_scale: float, optional</strong></dt><dd><p>Factor by which to scale the provided height</p>
+</dd>
+<dt><strong>width_scale: float, optional</strong></dt><dd><p>Factor by which to scale the provided width</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>([x_range, y_range, width, height])</p></td>
+<td><p>Compute an image from the specified pipeline.</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py attribute">
+<dt id="datashader.bundling.directly_connect_edges">
+<code class="sig-prename descclassname">datashader.bundling.</code><code class="sig-name descname">directly_connect_edges</code><a class="headerlink" href="#datashader.bundling.directly_connect_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">datashader.bundling.connect_edges</span></code></p>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.bundling.hammer_bundle">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.bundling.</code><code class="sig-name descname">hammer_bundle</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/bundling.html#hammer_bundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.bundling.hammer_bundle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iteratively group edges and return as paths suitable for datashading.</p>
+<p>Breaks each edge into a path with multiple line segments, and
+iteratively curves this path to bundle edges into groups.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(nodes, edges, **params)</p></td>
+<td><p>Convert a graph data structure into a path structure for plotting</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">debug</span></code>(**kwargs)</p></td>
+<td><p>Inspect .param.debug method for the full docstring</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">defaults</span></code>(**kwargs)</p></td>
+<td><p>Inspect .param.defaults method for the full docstring</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">force_new_dynamic_value</span></code>(**kwargs)</p></td>
+<td><p>Inspect .param.force_new_dynamic_value method for the full docstring</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_param_values</span></code>(**kwargs)</p></td>
+<td><p>Inspect .param.get_param_values method for the full docstring</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_value_generator</span></code>(**kwargs)</p></td>
+<td><p>Inspect .param.get_value_generator method for the full docstring</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect_value</span></code>(**kwargs)</p></td>
+<td><p>Inspect .param.inspect_value method for the full docstring</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">instance</span></code>(**params)</p></td>
+<td><p>Return an instance of this class, copying parameters from any existing instance provided.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">message</span></code>(**kwargs)</p></td>
+<td><p>Inspect .param.message method for the full docstring</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">params</span></code>(**kwargs)</p></td>
+<td><p>Inspect .param.params method for the full docstring</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pprint</span></code>([imports, prefix, unknown_value, …])</p></td>
+<td><p>Same as Parameterized.pprint, except that X.classname(Y is replaced with X.classname.instance(Y</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_param_defaults</span></code>(*args, **kwargs)</p></td>
+<td><p>Inspect .param.print_param_defaults method for the full docstring</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_param_values</span></code>(**kwargs)</p></td>
+<td><p>Inspect .param.print_param_values method for the full docstring</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">script_repr</span></code>([imports, prefix])</p></td>
+<td><p>Same as Parameterized.script_repr, except that X.classname(Y is replaced with X.classname.instance(Y</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_default</span></code>(*args, **kwargs)</p></td>
+<td><p>Inspect .param.set_default method for the full docstring</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_dynamic_time_fn</span></code>(**kwargs)</p></td>
+<td><p>Inspect .param.set_dynamic_time_fn method for the full docstring</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_param</span></code>(**kwargs)</p></td>
+<td><p>Inspect .param.set_param method for the full docstring</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">state_pop</span></code>()</p></td>
+<td><p>Restore the most recently saved state.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">state_push</span></code>()</p></td>
+<td><p>Save this instance’s state.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">verbose</span></code>(**kwargs)</p></td>
+<td><p>Inspect .param.verbose method for the full docstring</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">warning</span></code>(**kwargs)</p></td>
+<td><p>Inspect .param.warning method for the full docstring</p></td>
+</tr>
+</tbody>
+</table>
+<p>Parameters inherited from:</p>
+<blockquote>
+<div><p><code class="xref py py-class docutils literal notranslate"><span class="pre">datashader.bundling.connect_edges</span></code>: x, y, source, target, include_edge_id</p>
+</div></blockquote>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">weight</span></code> = param.String(default=’weight’)</dt><dd><p>Column name for each edge weight. If None, weights are ignored.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">initial_bandwidth</span></code> = param.Number(bounds=(0.0, None), default=0.05, inclusive_bounds=(True, True))</dt><dd><p>Initial value of the bandwidth….</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">decay</span></code> = param.Number(bounds=(0.0, 1.0), default=0.7, inclusive_bounds=(True, True))</dt><dd><p>Rate of decay in the bandwidth value, with 1.0 indicating no decay.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">iterations</span></code> = param.Integer(bounds=(1, None), default=4, inclusive_bounds=(True, True))</dt><dd><p>Number of passes for the smoothing algorithm</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">batch_size</span></code> = param.Integer(bounds=(1, None), default=20000, inclusive_bounds=(True, True))</dt><dd><p>Number of edges to process together</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">tension</span></code> = param.Number(bounds=(0, None), default=0.3, inclusive_bounds=(True, True))</dt><dd><p>Exponential smoothing factor to use when smoothing</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">accuracy</span></code> = param.Integer(bounds=(1, None), default=500, inclusive_bounds=(True, True))</dt><dd><p>Number of entries in table for…</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">advect_iterations</span></code> = param.Integer(bounds=(0, None), default=50, inclusive_bounds=(True, True))</dt><dd><p>Number of iterations to move edges along gradients</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">min_segment_length</span></code> = param.Number(bounds=(0, None), default=0.008, inclusive_bounds=(True, True))</dt><dd><p>Minimum length (in data space?) for an edge segment</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">max_segment_length</span></code> = param.Number(bounds=(0, None), default=0.016, inclusive_bounds=(True, True))</dt><dd><p>Maximum length (in data space?) for an edge segment</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.glyphs.Point">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.glyphs.</code><code class="sig-name descname">Point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/glyphs/points.html#Point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.glyphs.Point" title="Permalink to this definition">¶</a></dt>
+<dd><p>A point, with center at <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p>
+<p>Points map each record to a single bin.
+Points falling exactly on the upper bounds are treated as a special case,
+mapping into the previous bin rather than being cropped off.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>x, y</strong><span class="classifier">str</span></dt><dd><p>Column names for the x and y coordinates of each point.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndims</span></code></dt><dd><p>The number of dimensions required in the data structure this Glyph is constructed from.</p>
+</dd>
+<dt><strong>x_label</strong></dt><dd></dd>
+<dt><strong>y_label</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_aggs_and_cols</span></code>(append)</p></td>
+<td><p>Create a decorator that can be used on functions that accept <a href="#id1"><span class="problematic" id="id2">*</span></a>aggs_and_cols as a variable length argument. The decorator will replace <a href="#id3"><span class="problematic" id="id4">*</span></a>aggs_and_cols with a fixed number of arguments.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 70%"/>
+<col style="width: 30%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>compute_bounds_dask</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>compute_x_bounds</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>compute_y_bounds</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>maybe_expand_bounds</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>required_columns</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>to_gpu_matrix</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.any">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">any</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#any"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.any" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether any elements in <code class="docutils literal notranslate"><span class="pre">column</span></code> map to each bin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>column</strong><span class="classifier">str, optional</span></dt><dd><p>If provided, only elements in <code class="docutils literal notranslate"><span class="pre">column</span></code> that are <code class="docutils literal notranslate"><span class="pre">NaN</span></code> are skipped.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.count">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">count</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count elements in each bin, returning the result as a uint32.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>column</strong><span class="classifier">str, optional</span></dt><dd><p>If provided, only counts elements in <code class="docutils literal notranslate"><span class="pre">column</span></code> that are not <code class="docutils literal notranslate"><span class="pre">NaN</span></code>.
+Otherwise, counts every element.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.count_cat">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">count_cat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#count_cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.count_cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>, grouped by category.
+Alias for <cite>by(…,count())</cite>, for backwards compatibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>column</strong><span class="classifier">str</span></dt><dd><p>Name of the column to aggregate over. Column data type must be
+categorical. Resulting aggregate has a outer dimension axis along the
+categories present.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>cat_column</strong></dt><dd></dd>
+<dt><strong>inputs</strong></dt><dd></dd>
+<dt><strong>val_column</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.first">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">first</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#first"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.first" title="Permalink to this definition">¶</a></dt>
+<dd><p>First value encountered in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p>
+<p>Useful for categorical data where an actual value must always be returned,
+not an average or other numerical calculation.</p>
+<p>Currently only supported for rasters, externally to this class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>column</strong><span class="classifier">str</span></dt><dd><p>Name of the column to aggregate over. If the data type is floating point,
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> values in the column are skipped.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.last">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">last</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#last"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.last" title="Permalink to this definition">¶</a></dt>
+<dd><p>Last value encountered in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p>
+<p>Useful for categorical data where an actual value must always be returned,
+not an average or other numerical calculation.</p>
+<p>Currently only supported for rasters, externally to this class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>column</strong><span class="classifier">str</span></dt><dd><p>Name of the column to aggregate over. If the data type is floating point,
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> values in the column are skipped.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.m2">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">m2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#m2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.m2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sum of square differences from the mean of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p>
+<p>Intermediate value for computing <code class="docutils literal notranslate"><span class="pre">var</span></code> and <code class="docutils literal notranslate"><span class="pre">std</span></code>, not intended to be
+used on its own.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>column</strong><span class="classifier">str</span></dt><dd><p>Name of the column to aggregate over. Column data type must be numeric.
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> values in the column are skipped.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.max">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">max</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#max"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum value of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>column</strong><span class="classifier">str</span></dt><dd><p>Name of the column to aggregate over. Column data type must be numeric.
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> values in the column are skipped.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.mean">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mean of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>column</strong><span class="classifier">str</span></dt><dd><p>Name of the column to aggregate over. Column data type must be numeric.
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> values in the column are skipped.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.min">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">min</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#min"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.min" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimum value of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>column</strong><span class="classifier">str</span></dt><dd><p>Name of the column to aggregate over. Column data type must be numeric.
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> values in the column are skipped.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.mode">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">mode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mode (most common value) of all the values encountered in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p>
+<p>Useful for categorical data where an actual value must always be returned,
+not an average or other numerical calculation.</p>
+<p>Currently only supported for rasters, externally to this class.
+Implementing it for other glyph types would be difficult due to potentially
+unbounded data storage requirements to store indefinite point or line
+data per pixel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>column</strong><span class="classifier">str</span></dt><dd><p>Name of the column to aggregate over. If the data type is floating point,
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> values in the column are skipped.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.std">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">std</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.std" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard Deviation of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>column</strong><span class="classifier">str</span></dt><dd><p>Name of the column to aggregate over. Column data type must be numeric.
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> values in the column are skipped.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.sum">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">sum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#sum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.sum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sum of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p>
+<p>Elements of resulting aggregate are nan if they are not updated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>column</strong><span class="classifier">str</span></dt><dd><p>Name of the column to aggregate over. Column data type must be numeric.
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> values in the column are skipped.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.summary">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">summary</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>A collection of named reductions.</p>
+<p>Computes all aggregates simultaneously, output is stored as a
+<code class="docutils literal notranslate"><span class="pre">xarray.Dataset</span></code>.</p>
+<p class="rubric">Examples</p>
+<p>A reduction for computing the mean of column “a”, and the sum of column “b”
+for each bin, all in a single pass.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">datashader</span> <span class="k">as</span> <span class="nn">ds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">red</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">mean_a</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">'a'</span><span class="p">),</span> <span class="n">sum_b</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s1">'b'</span><span class="p">))</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py class">
+<dt id="datashader.reductions.var">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.reductions.</code><code class="sig-name descname">var</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/reductions.html#var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.reductions.var" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variance of all elements in <code class="docutils literal notranslate"><span class="pre">column</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>column</strong><span class="classifier">str</span></dt><dd><p>Name of the column to aggregate over. Column data type must be numeric.
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> values in the column are skipped.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>inputs</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>out_dshape</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>validate</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<span class="target" id="module-datashader.transfer_functions"></span><dl class="py class">
+<dt id="datashader.transfer_functions.Image">
+<em class="property">class </em><code class="sig-prename descclassname">datashader.transfer_functions.</code><code class="sig-name descname">Image</code><span class="sig-paren">(</span><em class="sig-param">data: Any = &lt;NA&gt;, coords: Optional[Union[Sequence[Tuple], Mapping[collections.abc.Hashable, Any]]] = None, dims: collections.abc.Hashable = None, name: collections.abc.Hashable = None, attrs: Mapping = None, indexes: Dict[collections.abc.Hashable, pandas.core.indexes.base.Index] = None, fastpath: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/transfer_functions.html#Image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.transfer_functions.Image" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>T</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">attrs</span></code></dt><dd><p>Dictionary storing arbitrary metadata with this array.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunks</span></code></dt><dd><p>Block dimensions for this array’s data or None if it’s not a dask array.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">coords</span></code></dt><dd><p>Dictionary-like container of coordinate arrays.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></dt><dd><p>The array’s data as a dask or numpy array</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">dims</span></code></dt><dd><p>Tuple of dimension names associated with this array.</p>
+</dd>
+<dt><strong>dtype</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">encoding</span></code></dt><dd><p>Dictionary of format-specific settings for how this array should be serialized.</p>
+</dd>
+<dt><strong>imag</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">indexes</span></code></dt><dd><p>Mapping of pandas.Index objects used for label based indexing</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">loc</span></code></dt><dd><p>Attribute for location based indexing like pandas.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></dt><dd><p>The name of this array.</p>
+</dd>
+<dt><strong>nbytes</strong></dt><dd></dd>
+<dt><strong>ndim</strong></dt><dd></dd>
+<dt><strong>real</strong></dt><dd></dd>
+<dt><strong>shape</strong></dt><dd></dd>
+<dt><strong>size</strong></dt><dd></dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizes</span></code></dt><dd><p>Ordered mapping from dimension names to lengths.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></dt><dd><p>The array’s data as a numpy.ndarray</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">variable</span></code></dt><dd><p>Low level interface to the Variable object for this DataArray.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%"/>
+<col style="width: 90%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code>([dim, axis])</p></td>
+<td><p>Reduce this DataArray’s data by applying <cite>all</cite> along some dimension(s).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code>([dim, axis])</p></td>
+<td><p>Reduce this DataArray’s data by applying <cite>any</cite> along some dimension(s).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">argmax</span></code>([dim, axis, keep_attrs, skipna])</p></td>
+<td><p>Index or indices of the maximum of the DataArray over one or more dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">argmin</span></code>([dim, axis, keep_attrs, skipna])</p></td>
+<td><p>Index or indices of the minimum of the DataArray over one or more dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">argsort</span></code>([axis, kind, order])</p></td>
+<td><p>Returns the indices that would sort this array.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">assign_attrs</span></code>(*args, **kwargs)</p></td>
+<td><p>Assign new attrs to this object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">assign_coords</span></code>([coords])</p></td>
+<td><p>Assign new coordinates to this object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">astype</span></code>(dtype[, order, casting, subok, copy])</p></td>
+<td><p>Copy of the array, cast to a specified type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bfill</span></code>(dim[, limit])</p></td>
+<td><p>Fill NaN values by propogating values backward</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">broadcast_equals</span></code>(other)</p></td>
+<td><p>Two DataArrays are broadcast equal if they are equal after broadcasting them against each other such that they have the same dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">broadcast_like</span></code>(other[, exclude])</p></td>
+<td><p>Broadcast this DataArray against another Dataset or DataArray.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code>([chunks, name_prefix, token, lock])</p></td>
+<td><p>Coerce this array’s data into a dask arrays with the given chunks.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code>([min, max, out])</p></td>
+<td><p>Return an array whose values are limited to <code class="docutils literal notranslate"><span class="pre">[min,</span> <span class="pre">max]</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code>()</p></td>
+<td><p>Close any files linked to this object</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">coarsen</span></code>([dim, boundary, side, coord_func, …])</p></td>
+<td><p>Coarsen object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_first</span></code>(other)</p></td>
+<td><p>Combine two DataArray objects, with union of coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code>(**kwargs)</p></td>
+<td><p>Manually trigger loading of this array’s data from disk or a remote source into memory and return a new array.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">conj</span></code>()</p></td>
+<td><p>Complex-conjugate all elements.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">conjugate</span></code>()</p></td>
+<td><p>Return the complex conjugate, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code>([deep, data])</p></td>
+<td><p>Returns a copy of this array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code>([dim, axis])</p></td>
+<td><p>Reduce this DataArray’s data by applying <cite>count</cite> along some dimension(s).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumprod</span></code>([dim, axis, skipna])</p></td>
+<td><p>Apply <cite>cumprod</cite> along some dimension of DataArray.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code>([dim, axis, skipna])</p></td>
+<td><p>Apply <cite>cumsum</cite> along some dimension of DataArray.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">diff</span></code>(dim[, n, label])</p></td>
+<td><p>Calculate the n-th order discrete difference along given axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">differentiate</span></code>(coord[, edge_order, datetime_unit])</p></td>
+<td><p>Differentiate the array with the second order accurate central differences.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dot</span></code>(other[, dims])</p></td>
+<td><p>Perform dot product of two DataArrays along their shared dims.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop</span></code>([labels, dim, errors])</p></td>
+<td><p>Backward compatible method based on <cite>drop_vars</cite> and <cite>drop_sel</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop_sel</span></code>([labels, errors])</p></td>
+<td><p>Drop index labels from this DataArray.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop_vars</span></code>(names, *[, errors])</p></td>
+<td><p>Drop variables from this DataArray.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropna</span></code>(dim[, how, thresh])</p></td>
+<td><p>Returns a new array with dropped labels for missing values along the provided dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dt</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.core.accessor_dt.CombinedDatetimelikeAccessor</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code>(other)</p></td>
+<td><p>True if two DataArrays have the same dimensions, coordinates and values; otherwise False.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code>([dim, axis])</p></td>
+<td><p>Return a new object with an additional axis (or axes) inserted at the corresponding position in the array shape.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ffill</span></code>(dim[, limit])</p></td>
+<td><p>Fill NaN values by propogating values forward</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fillna</span></code>(value)</p></td>
+<td><p>Fill missing values in this object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_cdms2</span></code>(variable)</p></td>
+<td><p>Convert a cdms2.Variable into an xarray.DataArray</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code>(d)</p></td>
+<td><p>Convert a dictionary into an xarray.DataArray</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_iris</span></code>(cube)</p></td>
+<td><p>Convert a iris.cube.Cube into an xarray.DataArray</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_series</span></code>(series[, sparse])</p></td>
+<td><p>Convert a pandas.Series into an xarray.DataArray.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_axis_num</span></code>(dim)</p></td>
+<td><p>Return axis number(s) corresponding to dimension(s) in this array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index</span></code>(key)</p></td>
+<td><p>Get an index for a dimension, with fall-back to a default RangeIndex</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">groupby</span></code>(group[, squeeze, restore_coord_dims])</p></td>
+<td><p>Returns a GroupBy object for performing grouped operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">groupby_bins</span></code>(group, bins[, right, labels, …])</p></td>
+<td><p>Returns a GroupBy object for performing grouped operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">head</span></code>([indexers])</p></td>
+<td><p>Return a new DataArray whose data is given by the the first <cite>n</cite> values along the specified dimension(s).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">identical</span></code>(other)</p></td>
+<td><p>Like equals, but also checks the array name and attributes, and attributes on all coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">idxmax</span></code>([dim, skipna, fill_value, keep_attrs])</p></td>
+<td><p>Return the coordinate label of the maximum value along a dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">idxmin</span></code>([dim, skipna, fill_value, keep_attrs])</p></td>
+<td><p>Return the coordinate label of the minimum value along a dimension.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">integrate</span></code>(dim[, datetime_unit])</p></td>
+<td><p>integrate the array with the trapezoidal rule.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interp</span></code>([coords, method, assume_sorted, kwargs])</p></td>
+<td><p>Multidimensional interpolation of variables.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interp_like</span></code>(other[, method, assume_sorted, …])</p></td>
+<td><p>Interpolate this object onto the coordinates of another object, filling out of range values with NaN.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate_na</span></code>([dim, method, limit, …])</p></td>
+<td><p>Fill in NaNs by interpolating according to different methods.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isel</span></code>([indexers, drop, missing_dims])</p></td>
+<td><p>Return a new DataArray whose data is given by integer indexing along the specified dimension(s).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isin</span></code>(test_elements)</p></td>
+<td><p>Tests each value in the array for whether it is in test elements.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">item</span></code>(*args)</p></td>
+<td><p>Copy an element of an array to a standard Python scalar and return it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>(**kwargs)</p></td>
+<td><p>Manually trigger loading of this array’s data from disk or a remote source into memory and return this array.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">map_blocks</span></code>(func[, args, kwargs, template])</p></td>
+<td><p>Apply a function to each block of this DataArray.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code>([dim, axis, skipna])</p></td>
+<td><p>Reduce this DataArray’s data by applying <cite>max</cite> along some dimension(s).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code>([dim, axis, skipna])</p></td>
+<td><p>Reduce this DataArray’s data by applying <cite>mean</cite> along some dimension(s).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">median</span></code>([dim, axis, skipna])</p></td>
+<td><p>Reduce this DataArray’s data by applying <cite>median</cite> along some dimension(s).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code>([dim, axis, skipna])</p></td>
+<td><p>Reduce this DataArray’s data by applying <cite>min</cite> along some dimension(s).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pad</span></code>([pad_width, mode, stat_length, …])</p></td>
+<td><p>Pad this array along one or more dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code>(**kwargs)</p></td>
+<td><p>Trigger computation in constituent dask arrays</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pipe</span></code>(func, *args, **kwargs)</p></td>
+<td><p>Apply <code class="docutils literal notranslate"><span class="pre">func(self,</span> <span class="pre">*args,</span> <span class="pre">**kwargs)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.plot.plot._PlotMethods</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">polyfit</span></code>(dim, deg[, skipna, rcond, w, full, cov])</p></td>
+<td><p>Least squares polynomial fit.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">prod</span></code>([dim, axis, skipna])</p></td>
+<td><p>Reduce this DataArray’s data by applying <cite>prod</cite> along some dimension(s).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantile</span></code>(q[, dim, interpolation, …])</p></td>
+<td><p>Compute the qth quantile of the data along the specified dimension.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rank</span></code>(dim[, pct, keep_attrs])</p></td>
+<td><p>Ranks the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reduce</span></code>(func[, dim, axis, keep_attrs, keepdims])</p></td>
+<td><p>Reduce this array by applying <cite>func</cite> along some dimension(s).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reindex</span></code>([indexers, method, tolerance, copy, …])</p></td>
+<td><p>Conform this object onto the indexes of another object, filling in missing values with <code class="docutils literal notranslate"><span class="pre">fill_value</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reindex_like</span></code>(other[, method, tolerance, …])</p></td>
+<td><p>Conform this object onto the indexes of another object, filling in missing values with <code class="docutils literal notranslate"><span class="pre">fill_value</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rename</span></code>([new_name_or_name_dict])</p></td>
+<td><p>Returns a new DataArray with renamed coordinates or a new name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reorder_levels</span></code>([dim_order, inplace])</p></td>
+<td><p>Rearrange index levels using input order.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample</span></code>([indexer, skipna, closed, label, …])</p></td>
+<td><p>Returns a Resample object for performing resampling operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_coords</span></code>([names, drop, inplace])</p></td>
+<td><p>Given names of coordinates, reset them to become variables.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_index</span></code>(dims_or_levels[, drop, inplace])</p></td>
+<td><p>Reset the specified index(es) or multi-index level(s).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code>([shifts, roll_coords])</p></td>
+<td><p>Roll this array by an offset along one or more dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling</span></code>([dim, min_periods, center, keep_attrs])</p></td>
+<td><p>Rolling window object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_exp</span></code>([window, window_type])</p></td>
+<td><p>Exponentially-weighted moving window.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">searchsorted</span></code>(v[, side, sorter])</p></td>
+<td><p>Find indices where elements of v should be inserted in a to maintain order.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sel</span></code>([indexers, method, tolerance, drop])</p></td>
+<td><p>Return a new DataArray whose data is given by selecting index labels along the specified dimension(s).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_index</span></code>([indexes, append, inplace])</p></td>
+<td><p>Set DataArray (multi-)indexes using one or more existing coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shift</span></code>([shifts, fill_value])</p></td>
+<td><p>Shift this array by an offset along one or more dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sortby</span></code>(variables[, ascending])</p></td>
+<td><p>Sort object by labels or values (along an axis).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code>([dim, drop, axis])</p></td>
+<td><p>Return a new object with squeezed data.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stack</span></code>([dimensions])</p></td>
+<td><p>Stack any number of existing dimensions into a single new dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code>([dim, axis, skipna])</p></td>
+<td><p>Reduce this DataArray’s data by applying <cite>std</cite> along some dimension(s).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.core.accessor_str.StringAccessor</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code>([dim, axis, skipna])</p></td>
+<td><p>Reduce this DataArray’s data by applying <cite>sum</cite> along some dimension(s).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">swap_dims</span></code>(dims_dict)</p></td>
+<td><p>Returns a new DataArray with swapped dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tail</span></code>([indexers])</p></td>
+<td><p>Return a new DataArray whose data is given by the the last <cite>n</cite> values along the specified dimension(s).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">thin</span></code>([indexers])</p></td>
+<td><p>Return a new DataArray whose data is given by each <cite>n</cite> value along the specified dimension(s).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_cdms2</span></code>()</p></td>
+<td><p>Convert this array into a cdms2.Variable</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dataframe</span></code>([name])</p></td>
+<td><p>Convert this array and its coordinates into a tidy pandas.DataFrame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dataset</span></code>([dim, name, promote_attrs])</p></td>
+<td><p>Convert a DataArray to a Dataset.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code>([data])</p></td>
+<td><p>Convert this xarray.DataArray into a dictionary following xarray naming conventions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_index</span></code>()</p></td>
+<td><p>Convert this variable to a pandas.Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_iris</span></code>()</p></td>
+<td><p>Convert this array into a iris.cube.Cube</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_masked_array</span></code>([copy])</p></td>
+<td><p>Convert this array into a numpy.ma.MaskedArray</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_netcdf</span></code>(*args, **kwargs)</p></td>
+<td><p>Write DataArray contents to a netCDF file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_pandas</span></code>()</p></td>
+<td><p>Convert this array into a pandas object with the same shape.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_series</span></code>()</p></td>
+<td><p>Convert this array into a pandas.Series.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_unstacked_dataset</span></code>(dim[, level])</p></td>
+<td><p>Unstack DataArray expanding to Dataset along a given level of a stacked coordinate.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code>(*dims[, transpose_coords])</p></td>
+<td><p>Return a new DataArray object with transposed dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unify_chunks</span></code>()</p></td>
+<td><p>Unify chunk size along all chunked dimensions of this DataArray.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unstack</span></code>([dim, fill_value, sparse])</p></td>
+<td><p>Unstack existing dimensions corresponding to MultiIndexes into multiple new dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code>([dim, axis, skipna])</p></td>
+<td><p>Reduce this DataArray’s data by applying <cite>var</cite> along some dimension(s).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">weighted</span></code>(weights)</p></td>
+<td><p>Weighted operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code>(cond[, other, drop])</p></td>
+<td><p>Filter elements from this object according to a condition.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 58%"/>
+<col style="width: 42%"/>
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>isnull</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>notnull</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>round</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>to_bytesio</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>to_pil</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="py function">
+<dt id="datashader.transfer_functions.dynspread">
+<code class="sig-prename descclassname">datashader.transfer_functions.</code><code class="sig-name descname">dynspread</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">img</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">max_px</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">shape</span><span class="o">=</span><span class="default_value">'circle'</span></em>, <em class="sig-param"><span class="n">how</span><span class="o">=</span><span class="default_value">'over'</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/transfer_functions.html#dynspread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.transfer_functions.dynspread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spread pixels in an image dynamically based on the image density.</p>
+<p>Spreading expands each pixel a certain number of pixels on all sides
+according to a given shape, merging pixels using a specified compositing
+operator. This can be useful to make sparse plots more visible. Dynamic
+spreading determines how many pixels to spread based on a density
+heuristic.  Spreading starts at 1 pixel, and stops when the fraction
+of adjacent non-empty pixels reaches the specified threshold, or
+the max_px is reached, whichever comes first.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>img</strong><span class="classifier">Image</span></dt><dd></dd>
+<dt><strong>threshold</strong><span class="classifier">float, optional</span></dt><dd><p>A tuning parameter in [0, 1], with higher values giving more
+spreading.</p>
+</dd>
+<dt><strong>max_px</strong><span class="classifier">int, optional</span></dt><dd><p>Maximum number of pixels to spread on all sides.</p>
+</dd>
+<dt><strong>shape</strong><span class="classifier">str, optional</span></dt><dd><p>The shape to spread by. Options are ‘circle’ [default] or ‘square’.</p>
+</dd>
+<dt><strong>how</strong><span class="classifier">str, optional</span></dt><dd><p>The name of the compositing operator to use when combining pixels.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt id="datashader.transfer_functions.set_background">
+<code class="sig-prename descclassname">datashader.transfer_functions.</code><code class="sig-name descname">set_background</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">img</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/transfer_functions.html#set_background"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.transfer_functions.set_background" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new image, with the background set to <cite>color</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>img</strong><span class="classifier">Image</span></dt><dd></dd>
+<dt><strong>color</strong><span class="classifier">color name or tuple, optional</span></dt><dd><p>The background color. Can be specified either by name, hexcode, or as a
+tuple of <code class="docutils literal notranslate"><span class="pre">(red,</span> <span class="pre">green,</span> <span class="pre">blue)</span></code> values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt id="datashader.transfer_functions.shade">
+<code class="sig-prename descclassname">datashader.transfer_functions.</code><code class="sig-name descname">shade</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">agg</span></em>, <em class="sig-param"><span class="n">cmap</span><span class="o">=</span><span class="default_value">['lightblue', 'darkblue']</span></em>, <em class="sig-param"><span class="n">color_key</span><span class="o">=</span><span class="default_value">['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999', '#66c2a5', '#fc8d62', '#8da0cb', '#a6d854', '#ffd92f', '#e5c494', '#ffffb3', '#fb8072', '#fdb462', '#fccde5', '#d9d9d9', '#ccebc5', '#ffed6f']</span></em>, <em class="sig-param"><span class="n">how</span><span class="o">=</span><span class="default_value">'eq_hist'</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">255</span></em>, <em class="sig-param"><span class="n">min_alpha</span><span class="o">=</span><span class="default_value">40</span></em>, <em class="sig-param"><span class="n">span</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color_baseline</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/transfer_functions.html#shade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.transfer_functions.shade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a DataArray to an image by choosing an RGBA pixel color for each value.</p>
+<p>Requires a DataArray with a single data dimension, here called the
+“value”, indexed using either 2D or 3D coordinates.</p>
+<p>For a DataArray with 2D coordinates, the RGB channels are computed
+from the values by interpolated lookup into the given colormap
+<code class="docutils literal notranslate"><span class="pre">cmap</span></code>.  The A channel is then set to the given fixed <code class="docutils literal notranslate"><span class="pre">alpha</span></code>
+value for all non-zero values, and to zero for all zero values.</p>
+<p>DataArrays with 3D coordinates are expected to contain values
+distributed over different categories that are indexed by the
+additional coordinate.  Such an array would reduce to the
+2D-coordinate case if collapsed across the categories (e.g. if one
+did <code class="docutils literal notranslate"><span class="pre">aggc.sum(dim='cat')</span></code> for a categorical dimension <code class="docutils literal notranslate"><span class="pre">cat</span></code>).
+The RGB channels for the uncollapsed, 3D case are computed by
+averaging the colors in the provided <code class="docutils literal notranslate"><span class="pre">color_key</span></code> (with one color
+per category), weighted by the array’s value for that category.
+The A channel is then computed from the array’s total value
+collapsed across all categories at that location, ranging from the
+specified <code class="docutils literal notranslate"><span class="pre">min_alpha</span></code> to the maximum alpha value (255).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>agg</strong><span class="classifier">DataArray</span></dt><dd></dd>
+<dt><strong>cmap</strong><span class="classifier">list of colors or matplotlib.colors.Colormap, optional</span></dt><dd><p>The colormap to use for 2D agg arrays. Can be either a list of
+colors (specified either by name, RGBA hexcode, or as a tuple
+of <code class="docutils literal notranslate"><span class="pre">(red,</span> <span class="pre">green,</span> <span class="pre">blue)</span></code> values.), or a matplotlib colormap
+object.  Default is <code class="docutils literal notranslate"><span class="pre">["lightblue",</span> <span class="pre">"darkblue"]</span></code>.</p>
+</dd>
+<dt><strong>color_key</strong><span class="classifier">dict or iterable</span></dt><dd><p>The colors to use for a 3D (categorical) agg array.  Can be
+either a <code class="docutils literal notranslate"><span class="pre">dict</span></code> mapping from field name to colors, or an
+iterable of colors in the same order as the record fields,
+and including at least that many distinct colors.</p>
+</dd>
+<dt><strong>how</strong><span class="classifier">str or callable, optional</span></dt><dd><p>The interpolation method to use, for the <code class="docutils literal notranslate"><span class="pre">cmap</span></code> of a 2D
+DataArray or the alpha channel of a 3D DataArray. Valid
+strings are ‘eq_hist’ [default], ‘cbrt’ (cube root), ‘log’
+(logarithmic), and ‘linear’. Callables take 2 arguments - a
+2-dimensional array of magnitudes at each pixel, and a boolean
+mask array indicating missingness. They should return a numeric
+array of the same shape, with <code class="docutils literal notranslate"><span class="pre">NaN</span></code> values where the mask was
+True.</p>
+</dd>
+<dt><strong>alpha</strong><span class="classifier">int, optional</span></dt><dd><p>Value between 0 - 255 representing the alpha value to use for
+colormapped pixels that contain data (i.e. non-NaN values).
+Also used as the maximum alpha value when alpha is indicating
+data value, such as for single colors or categorical plots.
+Regardless of this value, <code class="docutils literal notranslate"><span class="pre">NaN</span></code> values are set to be fully
+transparent when doing colormapping.</p>
+</dd>
+<dt><strong>min_alpha</strong><span class="classifier">float, optional</span></dt><dd><p>The minimum alpha value to use for non-empty pixels when 
+alpha is indicating data value, in [0, 255].  Use a higher value
+to avoid undersaturation, i.e. poorly visible low-value datapoints,
+at the expense of the overall dynamic range.</p>
+</dd>
+<dt><strong>span</strong><span class="classifier">list of min-max range, optional</span></dt><dd><p>Min and max data values to use for colormap/alpha interpolation, when
+wishing to override autoranging.</p>
+</dd>
+<dt><strong>name</strong><span class="classifier">string name, optional</span></dt><dd><p>Optional string name to give to the Image object to return,
+to label results for display.</p>
+</dd>
+<dt><strong>color_baseline</strong><span class="classifier">float or None</span></dt><dd><p>Baseline for calculating how categorical data mixes to
+determine the color of a pixel. The color for each category is
+weighted by how far that category’s value is above this
+baseline value, out of the total sum across all categories’
+values. A value of zero is appropriate for counts and for
+other physical quantities for which zero is a meaningful
+reference; each category then contributes to the final color
+in proportion to how much each category contributes to the
+final sum.  However, if values can be negative or if they are
+on an interval scale where values e.g. twice as far from zero
+are not twice as high (such as temperature in Farenheit), then
+you will need to provide a suitable baseline value for use in
+calculating color mixing.  A value of None (the default) means
+to take the minimum across the entire aggregate array, which
+is safe but may not weight the colors as you expect; any
+categories with values near this baseline will contribute
+almost nothing to the final color. As a special case, if the
+only data present in a pixel is at the baseline level, the
+color will be an evenly weighted average of all such
+categories with data (to avoid the color being undefined in
+this case).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt id="datashader.transfer_functions.spread">
+<code class="sig-prename descclassname">datashader.transfer_functions.</code><code class="sig-name descname">spread</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">img</span></em>, <em class="sig-param"><span class="n">px</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">shape</span><span class="o">=</span><span class="default_value">'circle'</span></em>, <em class="sig-param"><span class="n">how</span><span class="o">=</span><span class="default_value">'over'</span></em>, <em class="sig-param"><span class="n">mask</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/transfer_functions.html#spread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.transfer_functions.spread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spread pixels in an image.</p>
+<p>Spreading expands each pixel a certain number of pixels on all sides
+according to a given shape, merging pixels using a specified compositing
+operator. This can be useful to make sparse plots more visible.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>img</strong><span class="classifier">Image</span></dt><dd></dd>
+<dt><strong>px</strong><span class="classifier">int, optional</span></dt><dd><p>Number of pixels to spread on all sides</p>
+</dd>
+<dt><strong>shape</strong><span class="classifier">str, optional</span></dt><dd><p>The shape to spread by. Options are ‘circle’ [default] or ‘square’.</p>
+</dd>
+<dt><strong>how</strong><span class="classifier">str, optional</span></dt><dd><p>The name of the compositing operator to use when combining pixels.</p>
+</dd>
+<dt><strong>mask</strong><span class="classifier">ndarray, shape (M, M), optional</span></dt><dd><p>The mask to spread over. If provided, this mask is used instead of
+generating one based on <cite>px</cite> and <cite>shape</cite>. Must be a square array
+with odd dimensions. Pixels are spread from the center of the mask to
+locations where the mask is True.</p>
+</dd>
+<dt><strong>name</strong><span class="classifier">string name, optional</span></dt><dd><p>Optional string name to give to the Image object to return,
+to label results for display.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt id="datashader.transfer_functions.stack">
+<code class="sig-prename descclassname">datashader.transfer_functions.</code><code class="sig-name descname">stack</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">imgs</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datashader/transfer_functions.html#stack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datashader.transfer_functions.stack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine images together, overlaying later images onto earlier ones.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>imgs</strong><span class="classifier">iterable of Image</span></dt><dd><p>The images to combine.</p>
+</dd>
+<dt><strong>how</strong><span class="classifier">str, optional</span></dt><dd><p>The compositing operator to combine pixels. Default is <cite>‘over’</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<!-- END MAIN BODY OF DOCS ––––––––––––– -->
+<footer class="footer">
+<div class="footer-links">
+<ul>
+<li><span class="footer-title">Links</span></li>
+<li><a href="getting_started/index.html">Getting Started</a></li>
+<li><a href="user_guide/index.html">User Guide</a></li>
+<li><a href="topics/index.html">Topics</a></li>
+<li><a href="#">API</a></li>
+<li><a href="FAQ.html">FAQ</a></li>
+<li><a href="about.html">About</a></li>
+</ul>
+<ul>
+<li><span class="footer-title">Join Us</span></li>
+<li><a href="https://github.com/holoviz/datashader/">Github</a></li>
+<li><a href="https://twitter.com/datashader/">Twitter</a></li>
+<li><a href="https://gitter.im/pyviz/pyviz">Gitter</a></li>
+<li><a href="https://holoviz.org">HoloViz</a></li>
+</ul>
+<ul class="copyright">
+<li>2016-2019, Anaconda, Inc.</li>
+</ul>
+</div>
+</footer>
+<!-- Google Analytics -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-154795830-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-154795830-1');
+</script>
+<!-- MathJax Config -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>

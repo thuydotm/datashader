@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<meta charset="utf-8"/>
+<title>FAQ — Datashader 0.11.1 documentation</title>
+<meta content="Turns even the largest data into images, accurately." name="description"/>
+<meta content="Datashader contributors" name="author"/>
+<!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+<script>
+    WebFont.load({
+      google: {
+        families: ['Source Sans Pro']
+      }
+    });
+  </script>
+<!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="_static/css/main.css" rel="stylesheet"/>
+<link href="_static/nbsite.css" rel="stylesheet"/>
+<!-- Scripts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script async="" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript">
+</script>
+<script src="_static/js/main.js"></script>
+<script src="_static/nbsite.js"></script>
+<script src="_static/require.js"></script>
+<!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="_static/favicon.ico" rel="icon" type="image/png"/>
+<!-- Canonical
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="/FAQ.html" rel="canonical">
+</link></head>
+<body class="">
+<header class="navigation">
+<div class="wrapper">
+<a class="logo" href="index.html">
+<img alt="Logo" src="_static/logo_horizontal.svg"/>
+</a>
+<a class="navigation-menu-button" href="javascript:void(0)" id="js-mobile-menu">Menu</a>
+<nav>
+<ul class="navigation-menu show" id="js-navigation-menu">
+<li class="nav-link doc-head"><a href="https://github.com/holoviz/datashader/">Github</a></li>
+<li class="nav-link doc-head"><a href="https://twitter.com/datashader/">Twitter</a></li>
+<li class="nav-link doc-head"><a href="https://gitter.im/pyviz/pyviz">Gitter</a></li>
+<li class="nav-link doc-head"><a href="https://holoviz.org">HoloViz</a></li>
+<li class="nav-link">
+<div style="display:inline-block;vertical-align: middle;">
+<div class="search-bar">
+<form action="search.html" method="get" role="search">
+<input name="q" placeholder="Search" type="search"/>
+<button type="submit">
+<img alt="Search Icon" src="https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/search-icon-black.png"/>
+</button>
+</form>
+</div>
+</div>
+</li>
+</ul>
+</nav>
+</div>
+</header>
+<div class="second-nav">
+<nav>
+<ul class="navigation-menu show">
+<li class="nav-link doc-head"><a href="getting_started/index.html">Getting Started</a></li>
+<li class="nav-link doc-head"><a href="user_guide/index.html">User Guide</a></li>
+<li class="nav-link doc-head"><a href="topics/index.html">Topics</a></li>
+<li class="nav-link doc-head"><a href="api.html">API</a></li>
+<li class="nav-link doc-head"><a href="#">FAQ</a></li>
+<li class="nav-link doc-head"><a href="about.html">About</a></li>
+</ul>
+</nav>
+</div>
+<!-- MAIN BODY OF DOCS –––––––––––––––––– -->
+<div class="docs section">
+<div id="hacketyhackhack"> <!-- style="width:20%;margin-right: 100px;"> --> <!--style="display: none;"> style="display:none;"> -->
+<div class="toc" style="width:15%; margin-right:20px;">
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/index.html">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+</ul>
+</div>
+</div>
+<div class="content"> <!-- style="max-width:80%;margin-left:auto;margin-right: auto;">-->
+<div class="section" id="faq">
+<h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h1>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="When-should-I-use-Datashader?">When should I use Datashader?<a class="anchor-link" href="#When-should-I-use-Datashader?">¶</a></h3><p>Datashader is designed for working with large datasets, for
+cases where it is most crucial to faithfully represent the
+<em>distribution</em> of your data. Datashader can work easily with
+extremely large datasets, generating a fixed-size data structure
+(regardless of the original number of records) that gets transferred to
+your local browser for display.  If you ever find yourself subsampling
+your data just so that you can plot it feasibly, or if you are forced
+for practical reasons to iterate over chunks of it rather than looking
+at all of it at once, then Datashader can probably help you.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="When-should-I-not-use-Datashader?">When should I <em>not</em> use Datashader?<a class="anchor-link" href="#When-should-I-not-use-Datashader?">¶</a></h3><p>If you have a very small number of data points (in the hundreds
+or thousands) or curves (in the tens or several tens, each with
+hundreds or thousands of points), then conventional plotting packages
+like <a href="https://bokeh.pydata.org">Bokeh</a> may be more suitable.  With conventional browser-based
+packages, all of the data points are passed directly to the browser for
+display, allowing specific interaction with each curve or point,
+including display of metadata, linking to sources, etc.  This approach
+offers the most flexibility <em>per point</em> or <em>per curve</em>, but rapidly
+runs into limitations on how much data can be processed by the browser,
+and how much can be displayed on screen and resolved by the human
+visual system.  If you are not having such problems, i.e., your data is
+easily handled by your plotting infrastructure and you can easily see
+and work with all your data onscreen already, then you probably don't
+need Datashader.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Is-Datashader-part-of-Bokeh-or-HoloViews?">Is Datashader part of Bokeh or HoloViews?<a class="anchor-link" href="#Is-Datashader-part-of-Bokeh-or-HoloViews?">¶</a></h3><p>Datashader is an independent project, focusing on generating
+aggregate arrays and representations of them as images.  Bokeh
+and HoloViews are complementary projects, focusing on building
+browser-based visualizations and dashboards. These and other plotting
+packages can display images rendered by Datashader, providing axes,
+interactive zooming and panning, selection, legends, hover
+information, and so on.  Sample Bokeh and HoloViews plotting code is
+provided with Datashader and Plotly also provides support, while
+viewers for Matplotlib and other plotting tools are under
+development. The library can also be used separately, without any
+external plotting packages, generating images that can be displayed
+directly or saved to disk, or generating aggregate arrays suitable
+for further analysis.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="What's-the-easiest-way-to-use-Datashader-interactively?">What's the easiest way to use Datashader interactively?<a class="anchor-link" href="#What's-the-easiest-way-to-use-Datashader-interactively?">¶</a></h3><p><a href="https://holoviews.org">HoloViews</a>. HoloViews uses Bokeh or Plotly behind
+the scenes, but it offers a higher level API that is well suited to
+the sorts of magic that allow interactive use of Datashader. For a
+given dataset, HoloViews can easily construct either a raw Bokeh/Plotly plot
+or a Bokeh/Plotly plot with server-side rendering from Datashader, hiding
+nearly all of the complexity involved.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="How-can-I-get-legends-and-colorbars-for-my-Datashader-plot?">How can I get legends and colorbars for my Datashader plot?<a class="anchor-link" href="#How-can-I-get-legends-and-colorbars-for-my-Datashader-plot?">¶</a></h3><p>When used as a standalone library, Datashader can only generate images or bare arrays; it does not have any concept of axes, legends, or colorbars. But Datashader is designed to work well as a rendering engine for other plotting libraries that do offer those features. For the specific case of colorbars, just ensure that you are letting the separate plotting library do the colormapping, not Datashader, and you should be able to get full support for colorbars. That is, use Datashader to aggregate the image into a fixed array of values, and then use Bokeh, Plotly, or Holoviews to colormap and render the array as pixels, which will allow the plotting library to construct a suitable colormap. For instance, to get a colorbar in HoloViews, use <code>rasterize()</code> to invoke datashader on the data and generate an array of values; do not use <code>datashade()</code>, which would <code>rasterize()</code> while also calling <code>shade()</code> to generate RGB pixel values, at which point the plotting library would not be able to report the mapping from value to color, as it only would have seen the final RGB values. Of course, if you let the plotting library do the colormapping, you will no longer be able to use Datashader-specific features like histogram equalization, which would then need to be implemented by the plotting library if you want to have colorbars for such cases.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="What-data-libraries-can-I-use-with-Datashader?">What data libraries can I use with Datashader?<a class="anchor-link" href="#What-data-libraries-can-I-use-with-Datashader?">¶</a></h3><p>See the <a href="user_guide/Performance.html#Data-objects">Performance user guide</a> for the available options for working with columnar/multidimensional/ragged data on single-core/multi-core/distributed/CPU/GPU resources in or out of core for each available glyph.</p>
+</div>
+</div>
+</div>
+<hr class="docutils"/>
+<p><a class="reference external" href="https://raw.githubusercontent.com/holoviz/datashader/master/examples/FAQ.ipynb">Right click to download this notebook from GitHub.</a></p>
+</div>
+</div>
+</div>
+<!-- END MAIN BODY OF DOCS ––––––––––––– -->
+<footer class="footer">
+<div class="footer-links">
+<ul>
+<li><span class="footer-title">Links</span></li>
+<li><a href="getting_started/index.html">Getting Started</a></li>
+<li><a href="user_guide/index.html">User Guide</a></li>
+<li><a href="topics/index.html">Topics</a></li>
+<li><a href="api.html">API</a></li>
+<li><a href="#">FAQ</a></li>
+<li><a href="about.html">About</a></li>
+</ul>
+<ul>
+<li><span class="footer-title">Join Us</span></li>
+<li><a href="https://github.com/holoviz/datashader/">Github</a></li>
+<li><a href="https://twitter.com/datashader/">Twitter</a></li>
+<li><a href="https://gitter.im/pyviz/pyviz">Gitter</a></li>
+<li><a href="https://holoviz.org">HoloViz</a></li>
+</ul>
+<ul class="copyright">
+<li>2016-2019, Anaconda, Inc.</li>
+</ul>
+</div>
+</footer>
+<!-- Google Analytics -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-154795830-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-154795830-1');
+</script>
+<!-- MathJax Config -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>

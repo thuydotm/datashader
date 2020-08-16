@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<meta charset="utf-8"/>
+<title>Datashader 0.11.1 documentation</title>
+<meta content="Turns even the largest data into images, accurately." name="description"/>
+<meta content="Datashader contributors" name="author"/>
+<!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+<script>
+    WebFont.load({
+      google: {
+        families: ['Source Sans Pro']
+      }
+    });
+  </script>
+<!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="_static/css/main.css" rel="stylesheet"/>
+<link href="_static/nbsite.css" rel="stylesheet"/>
+<!-- Scripts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script async="" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript">
+</script>
+<script src="_static/js/main.js"></script>
+<script src="_static/nbsite.js"></script>
+<script src="_static/require.js"></script>
+<!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="_static/favicon.ico" rel="icon" type="image/png"/>
+<!-- Canonical
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="/index.html" rel="canonical">
+</link></head>
+<body class="">
+<header class="navigation">
+<div class="wrapper">
+<a class="logo" href="#">
+<img alt="Logo" src="_static/logo_horizontal.svg"/>
+</a>
+<a class="navigation-menu-button" href="javascript:void(0)" id="js-mobile-menu">Menu</a>
+<nav>
+<ul class="navigation-menu show" id="js-navigation-menu">
+<li class="nav-link doc-head"><a href="https://github.com/holoviz/datashader/">Github</a></li>
+<li class="nav-link doc-head"><a href="https://twitter.com/datashader/">Twitter</a></li>
+<li class="nav-link doc-head"><a href="https://gitter.im/pyviz/pyviz">Gitter</a></li>
+<li class="nav-link doc-head"><a href="https://holoviz.org">HoloViz</a></li>
+<li class="nav-link">
+<div style="display:inline-block;vertical-align: middle;">
+<div class="search-bar">
+<form action="search.html" method="get" role="search">
+<input name="q" placeholder="Search" type="search"/>
+<button type="submit">
+<img alt="Search Icon" src="https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/search-icon-black.png"/>
+</button>
+</form>
+</div>
+</div>
+</li>
+</ul>
+</nav>
+</div>
+</header>
+<div class="second-nav">
+<nav>
+<ul class="navigation-menu show">
+<li class="nav-link doc-head"><a href="getting_started/index.html">Getting Started</a></li>
+<li class="nav-link doc-head"><a href="user_guide/index.html">User Guide</a></li>
+<li class="nav-link doc-head"><a href="topics/index.html">Topics</a></li>
+<li class="nav-link doc-head"><a href="api.html">API</a></li>
+<li class="nav-link doc-head"><a href="FAQ.html">FAQ</a></li>
+<li class="nav-link doc-head"><a href="about.html">About</a></li>
+</ul>
+</nav>
+</div>
+<!-- MAIN BODY OF DOCS –––––––––––––––––– -->
+<div class="docs section">
+<div id="hacketyhackhack"> <!-- style="width:20%;margin-right: 100px;"> --> <!--style="display: none;"> style="display:none;"> -->
+<div class="toc" style="width:15%; margin-right:20px;">
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/index.html">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FAQ.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+</ul>
+</div>
+</div>
+<div class="content"> <!-- style="max-width:80%;margin-left:auto;margin-right: auto;">-->
+<h1><img src="_static/logo_horizontal.png" style="width: 50%;"/></h1><div style="width: 30%; float: right; margin-right: -15%; margin-top: -12%; padding-left: 20px;">
+<a class="twitter-timeline" data-height="560" data-link-color="#902040" data-width="400" href="https://twitter.com/datashader">Tweets Datashader</a>
+</div><script async="" charset="utf-8" src="//platform.twitter.com/widgets.js"></script>
+<p><strong>Accurately render even the largest data</strong></p>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Datashader is a graphics pipeline system for creating meaningful
+representations of large datasets quickly and flexibly. Datashader
+breaks the creation of images into a series of explicit steps that
+allow computations to be done on intermediate representations.  This
+approach allows accurate and effective visualizations to be produced
+automatically without trial-and-error parameter tuning, and also makes
+it simple for data scientists to focus on particular data and
+relationships of interest in a principled way.</p>
+<p>The computation-intensive steps in this process are written in Python
+but transparently compiled to machine code using <a href="https://numba.pydata.org">Numba</a> and flexibly
+distributed across CPU cores and processors using <a href="https://dask.pydata.org">Dask</a> or GPUs using <a href="https://github.com/rapidsai/cudf">CUDA</a>, providing a
+highly optimized rendering pipeline that makes it practical to work
+with extremely large datasets even on standard hardware while exploiting distributed and GPU systems when available.</p>
+<p>For concreteness, here's an example of what Datashader code looks like:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datashader</span> <span class="k">as</span> <span class="nn">ds</span><span class="o">,</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">datashader.transfer_functions</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'user_data.csv'</span><span class="p">)</span>
+
+<span class="n">cvs</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">Canvas</span><span class="p">(</span><span class="n">plot_width</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">plot_height</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+<span class="n">agg</span> <span class="o">=</span> <span class="n">cvs</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">'x_col'</span><span class="p">,</span> <span class="s1">'y_col'</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">'z_col'</span><span class="p">))</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">agg</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="p">[</span><span class="s1">'lightblue'</span><span class="p">,</span> <span class="s1">'darkblue'</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">'log'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This code reads a data file into a Pandas dataframe <code>df</code>, and then
+projects the fields <code>x_col</code> and <code>y_col</code> onto the x and y dimensions of
+400x400 grid, aggregating it by the mean value of the <code>z_col</code> of each
+datapoint. The results are rendered into an image where the minimum
+count will be plotted in <code>lightblue</code>, the maximum in <code>darkblue</code>, and
+ranging logarithmically in between.</p>
+<p>With code like the above, you can plot 300 million points of data (one
+per person in the USA) from the 2010 census without any parameter tuning:</p>
+<p><a href="https://examples.pyviz.org/census/census.html"><img alt="image" src="assets/images/usa_census.jpg" width="1000"/></a></p>
+<p><a href="https://examples.pyviz.org/census/census.html"><img alt="image" src="assets/images/nyc_races.jpg" width="1000"/></a></p>
+<p>Or you can plot attractors with 10 million points each, using random colormaps:</p>
+<p><a href="https://examples.pyviz.org/attractors/attractors.html"><img alt="image" src="assets/images/sym_attractors.jpg" width="1000"/></a></p>
+<p>See the <a href="topics">topics page</a> for these and many other examples.</p>
+<h2 id="Installation">Installation<a class="anchor-link" href="#Installation">¶</a></h2><p>Please follow the instructions on <a href="https://datashader.org/getting_started">Getting Started</a>
+if you want to reproduce the specific examples on this website, or follow the instructions at <a href="https://holoviz.org">HoloViz.org</a> if you want to try out Datashader together with related plotting tools.</p>
+<h2 id="Other-resources">Other resources<a class="anchor-link" href="#Other-resources">¶</a></h2><p>You can see Datashader in action in the <a href="https://www.youtube.com/watch?v=7deGS4IPAQ0">2019 HoloViz SciPy tutorial</a> (3 hours!),
+listen to the <a href="https://www.youtube.com/watch?v=6m3CFbKmK_c">Open Source Directions</a> episode from July 2019, or
+see how it is used in many of the projects at <a href="https://examples.pyviz.org">examples.pyviz.org</a>.</p>
+<p>Some of the original ideas for Datashader were developed under the
+name Abstract Rendering, which is described in a <a href="http://spie.org/Publications/Proceedings/Paper/10.1117/12.2041200">2014 SPIE VDA paper</a>.</p>
+<p>The source code for datashader is maintained on <a href="https://github.com/holoviz/datashader">Github</a>, and
+is documented using the API link on this page.</p>
+<p>We recommend the <a href="getting_started">Getting Started Guide</a> to learn
+the basic concepts and start using Datashader as quickly as possible.</p>
+<p>The <a href="user_guide">User Guide</a> covers specific topics in more detail.</p>
+<p>The <a href="api.html">API</a> is the definitive guide to each part of
+Datashader, but the same information is available more conveniently via
+the <code>help()</code> command as needed when using each component.</p>
+<p>Please feel free to report <a href="https://github.com/holoviz/datashader/issues">issues</a> or <a href="https://help.github.com/articles/about-pull-requests">contribute code</a>. You are also welcome to chat with the developers on <a href="https://gitter.im/pyviz/pyviz">gitter</a>.</p>
+</div>
+</div>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+<!-- END MAIN BODY OF DOCS ––––––––––––– -->
+<footer class="footer">
+<div class="footer-links">
+<ul>
+<li><span class="footer-title">Links</span></li>
+<li><a href="getting_started/index.html">Getting Started</a></li>
+<li><a href="user_guide/index.html">User Guide</a></li>
+<li><a href="topics/index.html">Topics</a></li>
+<li><a href="api.html">API</a></li>
+<li><a href="FAQ.html">FAQ</a></li>
+<li><a href="about.html">About</a></li>
+</ul>
+<ul>
+<li><span class="footer-title">Join Us</span></li>
+<li><a href="https://github.com/holoviz/datashader/">Github</a></li>
+<li><a href="https://twitter.com/datashader/">Twitter</a></li>
+<li><a href="https://gitter.im/pyviz/pyviz">Gitter</a></li>
+<li><a href="https://holoviz.org">HoloViz</a></li>
+</ul>
+<ul class="copyright">
+<li>2016-2019, Anaconda, Inc.</li>
+</ul>
+</div>
+</footer>
+<!-- Google Analytics -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-154795830-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-154795830-1');
+</script>
+<!-- MathJax Config -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>

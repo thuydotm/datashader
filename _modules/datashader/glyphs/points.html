@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<meta charset="utf-8"/>
+<title>datashader.glyphs.points — Datashader 0.11.1 documentation</title>
+<meta content="Turns even the largest data into images, accurately." name="description"/>
+<meta content="Datashader contributors" name="author"/>
+<!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+<script>
+    WebFont.load({
+      google: {
+        families: ['Source Sans Pro']
+      }
+    });
+  </script>
+<!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="../../../_static/css/main.css" rel="stylesheet"/>
+<link href="../../../_static/nbsite.css" rel="stylesheet"/>
+<!-- Scripts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script async="" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript">
+</script>
+<script src="../../../_static/js/main.js"></script>
+<script src="../../../_static/nbsite.js"></script>
+<script src="../../../_static/require.js"></script>
+<!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="../../../_static/favicon.ico" rel="icon" type="image/png"/>
+<!-- Canonical
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<link href="/_modules/datashader/glyphs/points.html" rel="canonical">
+</link></head>
+<body class="">
+<header class="navigation">
+<div class="wrapper">
+<a class="logo" href="../../../index.html">
+<img alt="Logo" src="../../../_static/logo_horizontal.svg"/>
+</a>
+<a class="navigation-menu-button" href="javascript:void(0)" id="js-mobile-menu">Menu</a>
+<nav>
+<ul class="navigation-menu show" id="js-navigation-menu">
+<li class="nav-link doc-head"><a href="https://github.com/holoviz/datashader/">Github</a></li>
+<li class="nav-link doc-head"><a href="https://twitter.com/datashader/">Twitter</a></li>
+<li class="nav-link doc-head"><a href="https://gitter.im/pyviz/pyviz">Gitter</a></li>
+<li class="nav-link doc-head"><a href="https://holoviz.org">HoloViz</a></li>
+<li class="nav-link">
+<div style="display:inline-block;vertical-align: middle;">
+<div class="search-bar">
+<form action="../../../search.html" method="get" role="search">
+<input name="q" placeholder="Search" type="search"/>
+<button type="submit">
+<img alt="Search Icon" src="https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/search-icon-black.png"/>
+</button>
+</form>
+</div>
+</div>
+</li>
+</ul>
+</nav>
+</div>
+</header>
+<div class="second-nav">
+<nav>
+<ul class="navigation-menu show">
+<li class="nav-link doc-head"><a href="../../../getting_started/index.html">Getting Started</a></li>
+<li class="nav-link doc-head"><a href="../../../user_guide/index.html">User Guide</a></li>
+<li class="nav-link doc-head"><a href="../../../topics/index.html">Topics</a></li>
+<li class="nav-link doc-head"><a href="../../../api.html">API</a></li>
+<li class="nav-link doc-head"><a href="../../../FAQ.html">FAQ</a></li>
+<li class="nav-link doc-head"><a href="../../../about.html">About</a></li>
+</ul>
+</nav>
+</div>
+<!-- MAIN BODY OF DOCS –––––––––––––––––– -->
+<div class="docs section">
+<div id="hacketyhackhack"> <!-- style="width:20%;margin-right: 100px;"> --> <!--style="display: none;"> style="display:none;"> -->
+<div class="toc" style="width:15%; margin-right:20px;">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/index.html">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../FAQ.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+</ul>
+</div>
+</div>
+<div class="content"> <!-- style="max-width:80%;margin-left:auto;margin-right: auto;">-->
+<h1>Source code for datashader.glyphs.points</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">toolz</span> <span class="kn">import</span> <span class="n">memoize</span>
+
+<span class="kn">from</span> <span class="nn">datashader.glyphs.glyph</span> <span class="kn">import</span> <span class="n">Glyph</span>
+<span class="kn">from</span> <span class="nn">datashader.utils</span> <span class="kn">import</span> <span class="n">isreal</span><span class="p">,</span> <span class="n">ngjit</span>
+
+<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">cuda</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cudf</span>
+    <span class="kn">from</span> <span class="nn">..transfer_functions._cuda_utils</span> <span class="kn">import</span> <span class="n">cuda_args</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="n">cudf</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">cuda_args</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">cudf</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">to_gpu_array</span><span class="p">(</span><span class="n">fillna</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">values</span>
+
+
+<span class="k">class</span> <span class="nc">_GeometryLike</span><span class="p">(</span><span class="n">Glyph</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">geometry</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ndims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">,)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geom_dtypes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">spatialpandas.geometry</span> <span class="kn">import</span> <span class="n">GeometryDtype</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">GeometryDtype</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_dshape</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_dshape</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">)],</span> <span class="bp">self</span><span class="o">.</span><span class="n">geom_dtypes</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'</span><span class="si">{col}</span><span class="s1"> must be an array with one of the following types: </span><span class="si">{typs}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span>
+                    <span class="n">typs</span><span class="o">=</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">typ</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">typ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geom_dtypes</span><span class="p">)</span>
+                <span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">x_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">'x'</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">y_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">'y'</span>
+
+    <span class="k">def</span> <span class="nf">required_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">compute_x_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">]</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">total_bounds_x</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">maybe_expand_bounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">compute_y_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">]</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">total_bounds_y</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">maybe_expand_bounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+
+    <span class="nd">@memoize</span>
+    <span class="k">def</span> <span class="nf">compute_bounds_dask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ddf</span><span class="p">):</span>
+        <span class="n">total_bounds</span> <span class="o">=</span> <span class="n">ddf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">]</span><span class="o">.</span><span class="n">total_bounds</span>
+        <span class="n">x_extents</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">total_bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">y_extents</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">total_bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maybe_expand_bounds</span><span class="p">(</span><span class="n">x_extents</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">maybe_expand_bounds</span><span class="p">(</span><span class="n">y_extents</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">_PointLike</span><span class="p">(</span><span class="n">Glyph</span><span class="p">):</span>
+    <span class="sd">"""Shared methods between Point and Line"""</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ndims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_dshape</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">isreal</span><span class="p">(</span><span class="n">in_dshape</span><span class="o">.</span><span class="n">measure</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'x must be real'</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">isreal</span><span class="p">(</span><span class="n">in_dshape</span><span class="o">.</span><span class="n">measure</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'y must be real'</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">x_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">y_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+
+    <span class="k">def</span> <span class="nf">required_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">compute_x_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_bounds</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">maybe_expand_bounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">compute_y_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_bounds</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">maybe_expand_bounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+
+    <span class="nd">@memoize</span>
+    <span class="k">def</span> <span class="nf">compute_bounds_dask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ddf</span><span class="p">):</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="n">ddf</span><span class="o">.</span><span class="n">map_partitions</span><span class="p">(</span><span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()]]</span>
+        <span class="p">))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+
+        <span class="n">x_extents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">r</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">r</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">y_extents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">r</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">r</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maybe_expand_bounds</span><span class="p">(</span><span class="n">x_extents</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">maybe_expand_bounds</span><span class="p">(</span><span class="n">y_extents</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="Point"><a class="viewcode-back" href="../../../api.html#datashader.glyphs.Point">[docs]</a><span class="k">class</span> <span class="nc">Point</span><span class="p">(</span><span class="n">_PointLike</span><span class="p">):</span>
+    <span class="sd">"""A point, with center at ``x`` and ``y``.</span>
+
+<span class="sd">    Points map each record to a single bin.</span>
+<span class="sd">    Points falling exactly on the upper bounds are treated as a special case,</span>
+<span class="sd">    mapping into the previous bin rather than being cropped off.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x, y : str</span>
+<span class="sd">        Column names for the x and y coordinates of each point.</span>
+<span class="sd">    """</span>
+    <span class="nd">@memoize</span>
+    <span class="k">def</span> <span class="nf">_build_extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_mapper</span><span class="p">,</span> <span class="n">y_mapper</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">append</span><span class="p">):</span>
+        <span class="n">x_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">y_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+
+        <span class="nd">@ngjit</span>
+        <span class="nd">@self</span><span class="o">.</span><span class="n">expand_aggs_and_cols</span><span class="p">(</span><span class="n">append</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">_perform_extend_points</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">ys</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1"># points outside bounds are dropped; remainder</span>
+            <span class="c1"># are mapped onto pixels</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">xmin</span> <span class="o">&lt;=</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">xmax</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ymin</span> <span class="o">&lt;=</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">ymax</span><span class="p">):</span>
+                <span class="n">xx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">x_mapper</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">sx</span> <span class="o">+</span> <span class="n">tx</span><span class="p">)</span>
+                <span class="n">yy</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">y_mapper</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">sy</span> <span class="o">+</span> <span class="n">ty</span><span class="p">)</span>
+                <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span> <span class="o">=</span> <span class="p">(</span><span class="n">xx</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">xmax</span> <span class="k">else</span> <span class="n">xx</span><span class="p">,</span>
+                          <span class="n">yy</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="n">ymax</span> <span class="k">else</span> <span class="n">yy</span><span class="p">)</span>
+
+                <span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span><span class="p">)</span>
+
+        <span class="nd">@ngjit</span>
+        <span class="nd">@self</span><span class="o">.</span><span class="n">expand_aggs_and_cols</span><span class="p">(</span><span class="n">append</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">extend_cpu</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">xs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">_perform_extend_points</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span><span class="p">)</span>
+
+        <span class="nd">@cuda</span><span class="o">.</span><span class="n">jit</span>
+        <span class="nd">@self</span><span class="o">.</span><span class="n">expand_aggs_and_cols</span><span class="p">(</span><span class="n">append</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">extend_cuda</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">cuda</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">xs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">_perform_extend_points</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="n">aggs</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">vt</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
+            <span class="n">aggs_and_cols</span> <span class="o">=</span> <span class="n">aggs</span> <span class="o">+</span> <span class="n">info</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+            <span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span> <span class="o">=</span> <span class="n">vt</span>
+            <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">bounds</span>
+
+            <span class="k">if</span> <span class="n">cudf</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cudf</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+                <span class="n">xs</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">x_name</span><span class="p">]</span><span class="o">.</span><span class="n">to_gpu_array</span><span class="p">(</span><span class="n">fillna</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">ys</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">y_name</span><span class="p">]</span><span class="o">.</span><span class="n">to_gpu_array</span><span class="p">(</span><span class="n">fillna</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">do_extend</span> <span class="o">=</span> <span class="n">extend_cuda</span><span class="p">[</span><span class="n">cuda_args</span><span class="p">(</span><span class="n">xs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">xs</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">x_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">ys</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">y_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">do_extend</span> <span class="o">=</span> <span class="n">extend_cpu</span>
+
+            <span class="n">do_extend</span><span class="p">(</span>
+                <span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">extend</span></div>
+
+
+<span class="k">class</span> <span class="nc">MultiPointGeometry</span><span class="p">(</span><span class="n">_GeometryLike</span><span class="p">):</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geom_dtypes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">spatialpandas.geometry</span> <span class="kn">import</span> <span class="n">PointDtype</span><span class="p">,</span> <span class="n">MultiPointDtype</span>
+        <span class="k">return</span> <span class="n">PointDtype</span><span class="p">,</span> <span class="n">MultiPointDtype</span>
+
+    <span class="nd">@memoize</span>
+    <span class="k">def</span> <span class="nf">_build_extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_mapper</span><span class="p">,</span> <span class="n">y_mapper</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">append</span><span class="p">):</span>
+        <span class="n">geometry_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span>
+
+        <span class="nd">@ngjit</span>
+        <span class="nd">@self</span><span class="o">.</span><span class="n">expand_aggs_and_cols</span><span class="p">(</span><span class="n">append</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">_perform_extend_points</span><span class="p">(</span>
+                <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span>
+        <span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># points outside bounds are dropped; remainder</span>
+            <span class="c1"># are mapped onto pixels</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">xmin</span> <span class="o">&lt;=</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">xmax</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ymin</span> <span class="o">&lt;=</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">ymax</span><span class="p">):</span>
+                <span class="n">xx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">x_mapper</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">sx</span> <span class="o">+</span> <span class="n">tx</span><span class="p">)</span>
+                <span class="n">yy</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">y_mapper</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">sy</span> <span class="o">+</span> <span class="n">ty</span><span class="p">)</span>
+                <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span> <span class="o">=</span> <span class="p">(</span><span class="n">xx</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">xmax</span> <span class="k">else</span> <span class="n">xx</span><span class="p">,</span>
+                          <span class="n">yy</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="n">ymax</span> <span class="k">else</span> <span class="n">yy</span><span class="p">)</span>
+
+                <span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span><span class="p">)</span>
+
+        <span class="nd">@ngjit</span>
+        <span class="nd">@self</span><span class="o">.</span><span class="n">expand_aggs_and_cols</span><span class="p">(</span><span class="n">append</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">extend_point_cpu</span><span class="p">(</span>
+                <span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span>
+                <span class="n">values</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">eligible_inds</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span>
+        <span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">eligible_inds</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">missing</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">_perform_extend_points</span><span class="p">(</span>
+                    <span class="n">i</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span>
+                    <span class="n">values</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span>
+                <span class="p">)</span>
+
+        <span class="nd">@ngjit</span>
+        <span class="nd">@self</span><span class="o">.</span><span class="n">expand_aggs_and_cols</span><span class="p">(</span><span class="n">append</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">extend_multipoint_cpu</span><span class="p">(</span>
+                <span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span>
+                <span class="n">values</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">offsets</span><span class="p">,</span> <span class="n">eligible_inds</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span>
+        <span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">eligible_inds</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">missing</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">stop</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                    <span class="n">_perform_extend_points</span><span class="p">(</span>
+                        <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span>
+                        <span class="n">values</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span>
+                    <span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="n">aggs</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">vt</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">spatialpandas.geometry</span> <span class="kn">import</span> <span class="n">PointArray</span>
+
+            <span class="n">aggs_and_cols</span> <span class="o">=</span> <span class="n">aggs</span> <span class="o">+</span> <span class="n">info</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+            <span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span> <span class="o">=</span> <span class="n">vt</span>
+            <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">bounds</span>
+
+            <span class="n">geometry</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">geometry_name</span><span class="p">]</span><span class="o">.</span><span class="n">array</span>
+
+            <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_sindex</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Compute indices of potentially intersecting polygons using</span>
+                <span class="c1"># geometry's R-tree if there is one</span>
+                <span class="n">eligible_inds</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sindex</span><span class="o">.</span><span class="n">intersects</span><span class="p">((</span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Otherwise, process all indices</span>
+                <span class="n">eligible_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">geometry</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">'uint32'</span><span class="p">)</span>
+
+            <span class="n">missing</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">PointArray</span><span class="p">):</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">flat_values</span>
+                <span class="n">extend_point_cpu</span><span class="p">(</span>
+                    <span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span>
+                    <span class="n">values</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">eligible_inds</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">buffer_values</span>
+                <span class="n">offsets</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">buffer_offsets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">extend_multipoint_cpu</span><span class="p">(</span>
+                    <span class="n">sx</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span>
+                    <span class="n">values</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">offsets</span><span class="p">,</span> <span class="n">eligible_inds</span><span class="p">,</span> <span class="o">*</span><span class="n">aggs_and_cols</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">extend</span>
+</pre></div>
+</div>
+</div>
+<!-- END MAIN BODY OF DOCS ––––––––––––– -->
+<footer class="footer">
+<div class="footer-links">
+<ul>
+<li><span class="footer-title">Links</span></li>
+<li><a href="../../../getting_started/index.html">Getting Started</a></li>
+<li><a href="../../../user_guide/index.html">User Guide</a></li>
+<li><a href="../../../topics/index.html">Topics</a></li>
+<li><a href="../../../api.html">API</a></li>
+<li><a href="../../../FAQ.html">FAQ</a></li>
+<li><a href="../../../about.html">About</a></li>
+</ul>
+<ul>
+<li><span class="footer-title">Join Us</span></li>
+<li><a href="https://github.com/holoviz/datashader/">Github</a></li>
+<li><a href="https://twitter.com/datashader/">Twitter</a></li>
+<li><a href="https://gitter.im/pyviz/pyviz">Gitter</a></li>
+<li><a href="https://holoviz.org">HoloViz</a></li>
+</ul>
+<ul class="copyright">
+<li>2016-2019, Anaconda, Inc.</li>
+</ul>
+</div>
+</footer>
+<!-- Google Analytics -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-154795830-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-154795830-1');
+</script>
+<!-- MathJax Config -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>
